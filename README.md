@@ -22,7 +22,7 @@
 ## 参与贡献
 1. Fork 本仓库
 2. 在suite2cases目录的指定文件中定义测试套和测试用例对应关系
-3. 在testcases目录下编写测试代码
+3. 在testcases目录下参考[测试用例命名及代码编程规范](https://gitee.com/openeuler/package-reinforce-test/blob/master/测试用例命名及代码编程规范.md)编写测试代码
 4. 下载[mugen](https://gitee.com/openeuler/test-tools.git)测试框架并完成代码调试
 5. 本地提交代码
 6. 码云新建 Pull Request
