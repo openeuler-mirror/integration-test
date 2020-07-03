@@ -21,7 +21,7 @@
 
 ## 参与贡献
 1. Fork 本仓库
-2. 在suite2cases目录的制定文件中定义测试套和测试用例对应关系
+2. 在suite2cases目录的指定文件中定义测试套和测试用例对应关系
 3. 在testcases目录下编写测试代码
 4. 下载[mugen](https://gitee.com/openeuler/test-tools.git)测试框架并完成代码调试
 5. 本地提交代码
