@@ -1,0 +1,58 @@
+#!/usr/bin/bash
+
+# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# This program is licensed under Mulan PSL v2.
+# You can use it according to the terms and conditions of the Mulan PSL v2.
+#          http://license.coscl.org.cn/MulanPSL2
+# THIS PROGRAM IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+# EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+# MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+# See the Mulan PSL v2 for more details.
+
+# #############################################
+# @Author    :   xuchunlin
+# @Contact   :   xcl_job@163.com
+# @Date      :   2020-04-09
+# @License   :   Mulan PSL v2
+# @Desc      :   Modity User test
+# ############################################
+
+source "$OET_PATH/libs/locallibs/common_lib.sh"
+function config_params() {
+    LOG_INFO "This test case has no config params to load!"
+}
+
+function pre_test() {
+    LOG_INFO "Start environment preparation."
+    cat /etc/passwd | grep "testuser1:" && userdel -rf testuser1
+    cat /etc/group | grep "testgroup1:" && groupdel testgroup1
+    useradd -u 555 testuser
+    groupmod -g 555 testuser
+    groupadd -g 72 testgroup1
+    LOG_INFO "End of environmental preparation!"
+}
+
+function run_test() {
+    LOG_INFO "Start testing..."
+    usermod -u 666 testuser
+    CHECK_RESULT $?
+    grep testuser /etc/passwd | awk -F : '{print$3}' | grep 666
+    CHECK_RESULT $?
+    usermod -g 72 testuser
+    CHECK_RESULT $?
+    grep testuser /etc/passwd | awk -F : '{print$4}' | grep 72
+    CHECK_RESULT $?
+    usermod --help
+    CHECK_RESULT $?
+    LOG_INFO "Finish test!"
+}
+
+function post_test() {
+    LOG_INFO "start environment cleanup."
+    userdel -rf testuser
+    groupdel testgroup1
+    groupdel testuser
+    LOG_INFO "Finish environment cleanup!"
+}
+
+main $@
