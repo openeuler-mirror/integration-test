@@ -35,3 +35,6 @@ oe_test_syslog_journalctl_002
 oe_test_syslog_journald_001
 oe_test_syslog_logrotate_001
 oe_test_syslog_messages_001
+oe_test_iscsi
+oe_test_nfs
+oe_test_pciutils
