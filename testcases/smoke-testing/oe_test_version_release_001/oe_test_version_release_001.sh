@@ -25,7 +25,7 @@ function run_test() {
     remove_list=(`awk '{print $1}' available`)
     failed_list=""
 
-    for rpm in ${rpm -qa}
+    for rpm in $(rpm -qa)
     do
         yum -y install $rpm  
         version=$(rpm -qi ${rpm} | grep Version | awk '{print $NF}')
