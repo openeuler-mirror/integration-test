@@ -26,19 +26,21 @@ function run_test() {
     remove_ope=(`awk '{print $1}' available`)
     failed_list=""
 
-    for rpm in ${remove_ope[*]}
+    for rpm in ${remove_ope[@]}
     do
         yum -y install $rpm  
         version=$(rpm -qi ${rpm} | grep Version | awk '{print $NF}')
         release=$(rpm -qi ${rpm} | grep Release | awk '{print $NF}')
         rpm -qi ${rpm} | grep "Source RPM" | grep -w "${version}-${release}" || failed_list="${failed_list} ${rpm}"
     done
+    [ -z "$failed_list" ]
+    CHECK_RESULT $?
     LOG_INFO "Finish test!"
 }
 
 function post_test() {
     LOG_INFO "start environment reset."
-    for item in ${remove_ope[*]}
+    for item in ${remove_ope[@]}
     do
        #把未安装的包删除
        yum -y remove $item --noautoremove
