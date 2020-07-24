@@ -8,7 +8,6 @@
 # ############################################
 
 
-set +o posix
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function config_params() {
@@ -23,10 +22,10 @@ function run_test() {
     sed -i '1,2d' available
 
     #将未安装的包名放在remove_ope数组中
-    remove_ope=(`awk '{print $1}' available`)
+    remove_list=(`awk '{print $1}' available`)
     failed_list=""
 
-    for rpm in ${remove_ope[@]}
+    for rpm in ${rpm -qa}
     do
         yum -y install $rpm  
         version=$(rpm -qi ${rpm} | grep Version | awk '{print $NF}')
@@ -40,7 +39,7 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "start environment reset."
-    for item in ${remove_ope[@]}
+    for item in ${remove_list[@]}
     do
        #把未安装的包删除
        yum -y remove $item --noautoremove
