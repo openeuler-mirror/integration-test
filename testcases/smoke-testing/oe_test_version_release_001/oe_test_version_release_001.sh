@@ -3,8 +3,8 @@
 # @Author    :   yuanlulu
 # @Contact   :   cynthiayuanll@163.com
 # @Date      :   2020-07-23
-# @License   :   Mulan PSL v2?
-# @Desc      :   File system common command test-version
+# @License   :   Mulan PSL v2
+# @Desc      :   Version consistency check of full package
 # ############################################
 
 
@@ -25,9 +25,9 @@ function run_test() {
     remove_list=(`awk '{print $1}' available`)
     failed_list=""
 
-    for rpm in ${remove_list[@]}
+    for install in ${remove_list[@]}
     do
-        yum -y install $rpm  
+        yum -y install $install  
     done
 
     for rpm in $(rpm -qa)
