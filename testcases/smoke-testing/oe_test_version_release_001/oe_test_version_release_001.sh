@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 # #############################################
 # @Author    :   yuanlulu
-# @Contact   :   @163.com
+# @Contact   :   cynthiayuanll@163.com
 # @Date      :   2020-07-23
 # @License   :   Mulan PSL v2?
 # @Desc      :   File system common command test-version
@@ -25,9 +25,13 @@ function run_test() {
     remove_list=(`awk '{print $1}' available`)
     failed_list=""
 
-    for rpm in $(rpm -qa)
+    for rpm in ${remove_list[@]}
     do
         yum -y install $rpm  
+    done
+
+    for rpm in $(rpm -qa)
+    do 
         version=$(rpm -qi ${rpm} | grep Version | awk '{print $NF}')
         release=$(rpm -qi ${rpm} | grep Release | awk '{print $NF}')
         rpm -qi ${rpm} | grep "Source RPM" | grep -w "${version}-${release}" || failed_list="${failed_list} ${rpm}"
