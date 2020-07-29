@@ -59,12 +59,12 @@ function run_test() {
     setfacl -b /tmp/acl01
     pre06=$(getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
     pre07=$(getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    pre08=$(getfacl -p /tmp/acl01/acl08|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
+    pre08=$(getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
     [ -z "$pre06" ] 
     CHECK_RESULT $?
     [ -z "$pre07" ]
     CHECK_RESULT $?
-    [ -z "$pre08" ] 
+    [ -n "$pre08" ] 
     CHECK_RESULT $?
 
     LOG_INFO "Finish test!"
@@ -72,7 +72,8 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    rm -rf /tmp/acl01 && userdel testuser
+    rm -rf /tmp/acl01
+    userdel testuser
     LOG_INFO "Finish environment cleanup!"
 }
 
