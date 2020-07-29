@@ -28,53 +28,44 @@ function pre_test() {
     ls /tmp/acl01 && rm -rf /tmp/acl01
     pre=$(cat /etc/passwd |grep -w "testuser"|awk -F : '{print $1}')
     [ -n "$pre" ] || useradd testuser
-    LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start testing..."
+
     mkdir -p /tmp/acl01/acl02
-    pre01=$(getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    [ -z "$pre01" ]
-    CHECK_RESULT $?
+    getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 1
 
     setfacl -m u:testuser:rx /tmp/acl01
-    pre02=$(getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
+    getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 0
     touch /tmp/acl01/acl02
-    pre03=$(getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    [ -n "$pre02" ]
-    CHECK_RESULT $?
-    [ -z "$pre03" ] 
-    CHECK_RESULT $?
+    getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 1
+
 
     setfacl -m d:u:testuser:rx /tmp/acl01
-    pre04=$(getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
+    getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 0
     touch /tmp/acl01/acl03
-    pre05=$(getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    [ -n "$pre04" ]
-    CHECK_RESULT $?
-    [ -n "$pre05" ] 
-    CHECK_RESULT $?
+    getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 0
 
     setfacl -b /tmp/acl01
-    pre06=$(getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    pre07=$(getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    pre08=$(getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser")
-    [ -z "$pre06" ] 
-    CHECK_RESULT $?
-    [ -z "$pre07" ]
-    CHECK_RESULT $?
-    [ -n "$pre08" ] 
-    CHECK_RESULT $?
+    getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 1
+    getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 1
+    getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
+    CHECK_RESULT $? 0 0
 
-    LOG_INFO "Finish test!"
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
     rm -rf /tmp/acl01
     userdel testuser
-    LOG_INFO "Finish environment cleanup!"
 }
 
 main $@
