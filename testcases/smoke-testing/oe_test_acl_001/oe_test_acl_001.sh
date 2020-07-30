@@ -26,21 +26,20 @@ function config_params() {
 function pre_test() {
     LOG_INFO "Start environment preparation."
     ls /tmp/acl01 && rm -rf /tmp/acl01
-    pre=$(cat /etc/passwd |grep -w "testuser"|awk -F : '{print $1}')
-    [ -n "$pre" ] || useradd testuser
+    id -u testuser || useradd testuser
 }
 
 function run_test() {
     LOG_INFO "Start testing..."
 
-    mkdir -p /tmp/acl01/acl02
+    mkdir -p /tmp/acl01
     getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 1
 
     setfacl -m u:testuser:rx /tmp/acl01
     getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 0
-    touch /tmp/acl01/acl02
+    mkdir  /tmp/acl01/acl02
     getfacl -p /tmp/acl01/acl02|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 1
 
@@ -48,7 +47,7 @@ function run_test() {
     setfacl -m d:u:testuser:rx /tmp/acl01
     getfacl -p /tmp/acl01|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 0
-    touch /tmp/acl01/acl03
+    mkdir  /tmp/acl01/acl03
     getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 0
 
