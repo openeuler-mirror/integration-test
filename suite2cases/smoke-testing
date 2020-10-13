@@ -64,3 +64,6 @@ oe_test_iSula_search_info_001
 oe_test_hdparm
 oe_test_lsscsi
 oe_test_ndctl
+oe_test_openssl
+oe_test_rsync
+oe_test_httpd

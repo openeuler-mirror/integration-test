@@ -34,13 +34,13 @@ function pre_test() {
 function run_test() {
     cp -raf /lib/udev/* $src_dir
     touch $des_dir/file_$$
-    rsync -a --delete $src_dir $des_dir
+    rsync -a --delete $src_dir/ $des_dir/
     diff $src_dir $des_dir -r
     
     rm -rf $des_dir/*
     echo -e "[test]\npath = $des_dir\nread only = no\nuid = root" > $conf_file
-    systemctl restart rsyncd
     setenforce 0
+    systemctl restart rsyncd
     rsync -a $0 localhost::test
     diff $0 $des_dir/$0 
 }

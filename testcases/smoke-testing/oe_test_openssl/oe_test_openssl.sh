@@ -29,10 +29,10 @@ function pre_test() {
 function run_test() {
     openssl enc -des3 -pbkdf2 -pass pass:abc123 -in /etc/fstab -out $encry_file
     diff /etc/fstab $encry_file && return 1
-    openssl enc -d -des3 -pbkdk2 -pass pass:abc123 -in $encry_file -out $decry_file
+    openssl enc -d -des3 -pbkdf2 -pass pass:abc123 -in $encry_file -out $decry_file
     diff /etc/fstab $decry_file
 
-    openssl req -newkey ras:2048 -nodes -keyout rsa_private.key -x509 -out cert.crt -subj "/C=CN/O=openeuler/OU=oec"
+    openssl req -newkey rsa:2048 -nodes -keyout rsa_private.key -x509 -out cert.crt -subj "/C=CN/O=openeuler/OU=oec"
     openssl x509 -in cert.crt -noout -text | grep "CN" | grep "openeuler" | grep "oec"
 }
 
