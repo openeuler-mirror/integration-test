@@ -66,4 +66,5 @@ oe_test_lsscsi
 oe_test_ndctl
 oe_test_openssl
 oe_test_rsync
+oe_test_acl_001
 oe_test_httpd

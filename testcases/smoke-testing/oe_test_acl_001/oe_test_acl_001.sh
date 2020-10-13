@@ -59,6 +59,7 @@ function run_test() {
     getfacl -p /tmp/acl01/acl03|grep "user"|awk -F : '{print $2}'|grep -w "testuser"
     CHECK_RESULT $? 0 0
 
+    return 0
 }
 
 function post_test() {

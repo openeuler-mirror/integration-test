@@ -32,7 +32,6 @@ function run_test() {
 
 function post_test() {
     systemctl stop httpd
-    dnf remove -y httpd
     rm -rf index.html
 }
 
