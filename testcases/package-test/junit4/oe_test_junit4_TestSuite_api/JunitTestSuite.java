@@ -9,7 +9,6 @@ public class JunitTestSuite {
       suite.run(result);
       System.out.println("Number of testSuite cases = " + suite.testCount());
       System.out.println("Number of test cases = " + result.runCount());
-      //test setName
       suite.setName("testNewName");
       String newName= suite.getName();
       System.out.println("Test Suite Name = "+ newName);

@@ -13,7 +13,6 @@ public class ParameterTest{
 	int input2=0;
 
 	@Parameters        
-	//or user @Parameterized.Parameters
 	public static Collection<Object[]> t(){
 		return Arrays.asList(new Object [][]{
 			{4,2,2},

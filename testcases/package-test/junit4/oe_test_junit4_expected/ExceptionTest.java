@@ -8,7 +8,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
 public class ExceptionTest {
-    //@Test(expected…)
     @Test(expected = ArithmeticException.class)
     public void testDivisionWithException() {
         int i = 1 / 0;
@@ -19,7 +18,6 @@ public class ExceptionTest {
         new ArrayList<>().get(0);
     }
 
-    //try/catch with assert/fail
     @Test
     public void testDivisionWithException2() {
         try {
@@ -30,7 +28,6 @@ public class ExceptionTest {
         }
 	}
 
-    //ExpectedException Rule
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
