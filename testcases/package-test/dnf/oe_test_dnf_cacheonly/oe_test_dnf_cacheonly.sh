@@ -30,7 +30,6 @@ function run_test() {
     dnf -C repoquery kernel
     CHECK_RESULT $? 0 0
     dnf clean all
-    #清理缓存后再仅使用缓存
     dnf -C repoquery kernel 2>&1 | grep Error
     CHECK_RESULT $? 0 0
     LOG_INFO "End of the test."

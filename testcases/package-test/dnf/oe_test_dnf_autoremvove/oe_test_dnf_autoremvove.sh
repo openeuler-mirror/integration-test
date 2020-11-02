@@ -22,10 +22,8 @@ function run_test() {
     LOG_INFO "Start to run test."
     dnf install -y vim
     rpm -e vim-enhanced
-    #卸载无用的依赖包
     dnf autoremove -y
     CHECK_RESULT $? 0 0
-    #查看无用依赖包是否被卸载
     rpm -qa | grep vim-common
     CHECK_RESULT $? 1 0
     LOG_INFO "End of the test."

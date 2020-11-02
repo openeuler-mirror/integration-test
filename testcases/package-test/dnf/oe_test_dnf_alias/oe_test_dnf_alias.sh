@@ -20,17 +20,14 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
-    #添加别名
     dnf alias add rm=remove
     dnf alias list | grep rm
     CHECK_RESULT $? 0 0
-    #检查别名是否生效
     dnf -y install tree
     dnf -y rm tree
     CHECK_RESULT $? 0 0
     rpm -q vim-enhanced
     CHECK_RESULT $? 1 0
-    #删除别名
     dnf alias delete rm
     dnf alias list | grep rm
     CHECK_RESULT $? 1 0

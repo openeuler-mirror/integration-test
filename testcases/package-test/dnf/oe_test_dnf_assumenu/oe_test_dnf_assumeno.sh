@@ -21,7 +21,6 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
-    #安装是输入Ｎ
     dnf --assumeno install tree
     CHECK_RESULT $? 1 0
     rpm -q tree
