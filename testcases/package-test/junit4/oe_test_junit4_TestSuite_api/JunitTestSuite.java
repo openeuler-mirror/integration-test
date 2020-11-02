@@ -1,10 +1,8 @@
-import junit.framework.*;
+import junit.framework.TestResult;
+import junit.framework.TestSuite;
 
 public class JunitTestSuite {
    public static void main(String[] a) {
-      //add the test's in the suite
-      //TestSuite suite = new TestSuite(TestJunit1.class, TestJunit2.class);
-      //suite.addTest(new JUnit4TestAdapter(TestJunit3.class));
       TestSuite suite = new TestSuite(TestJunit1.class, TestJunit3.class);
       suite.addTestSuite(TestJunit2.class);
       TestResult result = new TestResult();
