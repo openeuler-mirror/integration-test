@@ -40,7 +40,7 @@ function post_test() {
     crontab -r
     rm -rf $HOME/test.txt
     date -s "$time 1 minute"
-	LOG_INFO "End to restore the test environment."
+    LOG_INFO "End to restore the test environment."
 }
 
 main "$@"

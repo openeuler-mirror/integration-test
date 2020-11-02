@@ -34,16 +34,16 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start to run test."
-    echo -e "echo hello1 > /tmp/test" | at 4:30pm
+    echo -e "echo hello1 > /tmp/test" | at 11:30pm
     echo -e "echo hello2 > /tmp/test" | at 16:35
     echo -e "echo hello3 > /tmp/test" | at now+4 hours
-    echo -e "echo hello4 > /tmp/test" | at now+ 240 minutes
+    echo -e "echo hello4 > /tmp/test" | at now+240 minutes
     echo -e "echo hello5 > /tmp/test" | at 16:30 12.12.20
     echo -e "echo hello6 > /tmp/test" | at 16:30 12/12/20
     echo -e "echo hello7 > /tmp/test" | at 16:30 Dec 12
     new_count=$(atq | wc -l)
     CHECK_RESULT "${new_count}" $((${old_count} + 7))
-    date -s "16:29:30"
+    date -s "23:29:30"
     rm -rf /tmp/test
     SLEEP_WAIT 60
     grep "hello1" /tmp/test
