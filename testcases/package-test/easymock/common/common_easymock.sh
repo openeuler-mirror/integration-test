@@ -24,7 +24,8 @@ function deploy_env() {
 
 function clear_env() {
     DNF_REMOVE "java* easymock junit"
-    rm -rf ./*.class
+    rmdoc=$(ls | grep -vE ".sh|.java|.xml|expect_result|main|test")
+    rm -rf ${rmdoc}
 }
 
 function compile_java() {

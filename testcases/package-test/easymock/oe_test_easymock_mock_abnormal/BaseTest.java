@@ -6,8 +6,9 @@ public class BaseTest {
     @Test
     public void testBaseDao(){
         BaseDao baseDaoMock= EasyMock.createMock(BaseDao.class);
-        EasyMock.expect(baseDaoMock.queryById(EasyMock.anyObject())).andThrow(new RuntimeException("The id is not exist"));
-        EasyMock.replay(baseDaoMock);
+        RuntimeException runtimeException=new RuntimeException("The id is not exist");
+        EasyMock.expect(baseDaoMock.queryById(EasyMock.anyObject())).andThrow(runtimeException);
+	EasyMock.replay(baseDaoMock);
         BaseService baseService=new BaseService();
         baseService.setDao(baseDaoMock);
         String result=baseService.carryQuery("111");
