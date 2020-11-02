@@ -1,4 +1,4 @@
-package com.trustie.junitest;
+package main.java.junitest;
 
 public class StudentApplication {  
     IStudent student=null;  

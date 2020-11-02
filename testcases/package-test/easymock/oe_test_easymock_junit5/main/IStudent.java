@@ -1,4 +1,4 @@
-package com.trustie.junitest;
+package main.java.junitest;
 
 public interface IStudent {  
     public int doMethod1(int a);  

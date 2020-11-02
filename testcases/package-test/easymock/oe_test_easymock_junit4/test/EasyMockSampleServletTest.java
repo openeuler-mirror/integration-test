@@ -1,4 +1,4 @@
-package com.trustie.test;
+package test.java.easymocktest;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.easymock.EasyMock.*;
-import com.trustie.easymocktest.SampleServlet;
+import main.java.easymocktest.SampleServlet;
  
 public class EasyMockSampleServletTest {
     private SampleServlet sampleServlet;

@@ -11,7 +11,7 @@ public class AddServiceTest {
     int[] data3=data1;
     private AddInter addInter;
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws ClassNotFoundException {
         addInter=EasyMock.createMock(AddInter.class);
     }
     @Test

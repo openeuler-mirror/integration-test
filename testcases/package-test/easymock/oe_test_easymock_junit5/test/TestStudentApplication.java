@@ -1,9 +1,9 @@
-package com.trustie.junitest;
+package test.java.junitest;
 import org.easymock.EasyMock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
-import com.trustie.junitest.IStudent;
-import com.trustie.junitest.StudentApplication;
+import main.java.junitest.IStudent;
+import main.java.junitest.StudentApplication;
   
 public class TestStudentApplication {  
     IStudent student;  
