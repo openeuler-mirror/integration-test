@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# This program is licensed under Mulan PSL v2.
+# You can use it according to the terms and conditions of the Mulan PSL v2.
+#          http://license.coscl.org.cn/MulanPSL2
+# THIS PROGRAM IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+# EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+# MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+# See the Mulan PSL v2 for more details.
+
+# ##################################
+# @Author    :   zengcongwei
+# @Contact   :   735811396@qq.com
+# @Date      :   2020/5/12
+# @Desc      :   Test "dnf autoremove" command
+# ##################################
+
+source "$OET_PATH/libs/locallibs/common_lib.sh"
+
+function run_test() {
+    LOG_INFO "Start to run test."
+    dnf install -y vim
+    rpm -e vim-enhanced
+    #卸载无用的依赖包
+    dnf autoremove -y
+    CHECK_RESULT $? 0 0
+    #查看无用依赖包是否被卸载
+    rpm -qa | grep vim-common
+    CHECK_RESULT $? 1 0
+    LOG_INFO "End of the test."
+}
+
+function post_test() {
+    LOG_INFO "Need't to restore the tet environment."
+}
+
+main "$@"
