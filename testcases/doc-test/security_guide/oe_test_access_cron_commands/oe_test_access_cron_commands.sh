@@ -21,7 +21,7 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
     cp /etc/cron.allow /etc/cron.allow-bak
-    cp /etc/cron.deny /etc/at.cron-bak
+    test -f /etc/cron.deny && cp /etc/cron.deny /etc/at.cron-bak
     grep "^testuser1:" /etc/passwd && userdel -rf testuser1
     grep "^testuser2:" /etc/passwd && userdel -rf testuser2
     LOG_INFO "End of environmental preparation!"
@@ -59,7 +59,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start cleanning environment."
     mv /etc/cron.allow-bak /etc/cron.allow -f
-    mv /etc/cron.deny-bak /etc/cron.deny -f
+    test -f /etc/cron.deny-bak && mv /etc/cron.deny-bak /etc/cron.deny -f
     userdel -rf testuser1
     userdel -rf testuser2
     LOG_INFO "Finish environment cleanup!"

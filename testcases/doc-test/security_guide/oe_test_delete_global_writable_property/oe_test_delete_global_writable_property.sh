@@ -18,41 +18,32 @@
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
-function pre_test() {
-    LOG_INFO "Start environmental preparation."
-    ls testdir && rm -rf testdir
-    ls test.txt && rm -rf test.txt
-    LOG_INFO "End of environmental preparation!"
-}
-
 function run_test() {
     LOG_INFO "Start executing testcase."
-    mkdir testdir
+    testdir=$(mktemp -d)
+    chmod 777 ${testdir}
+    ls -al ${testdir} | awk 'NR=2' | grep "drwxrwxrwx"
     CHECK_RESULT $?
-    chmod 777 testdir
-    ls -l | grep testdir | grep "drwxrwxrwx"
+    find /tmp -type d \( -perm -o+w \) | grep -v procfind | grep ${testdir}
     CHECK_RESULT $?
-    find ./ -type d \( -perm -o+w \) | grep -v procfind | grep testdir
-    CHECK_RESULT $?
-    chmod o-w testdir
-    find ./ -type d \( -perm -o+w \) | grep -v procfind | grep testdir
+    chmod o-w ${testdir}
+    find /tmp -type d \( -perm -o+w \) | grep -v procfind | grep ${testdir}
     CHECK_RESULT $? 0 1
-    touch test.txt
+    test_txt=$(mktemp)
+    chmod 777 ${test_txt}
+    ls -l ${test_txt} | grep "rwxrwxrwx"
     CHECK_RESULT $?
-    chmod 777 test.txt
-    ls -l | grep test.txt | grep "rwxrwxrwx"
+    find /tmp -type f \( -perm -o+w \) | grep -v proc | grep ${test_txt}
     CHECK_RESULT $?
-    find . -type f \( -perm -o+w \) | grep -v proc | grep test.txt
-    CHECK_RESULT $?
-    chmod o-w test.txt
-    find . -type f \( -perm -o+w \) | grep -v proc | grep test.txt
+    chmod o-w ${test_txt}
+    find /tmp -type f \( -perm -o+w \) | grep -v proc | grep ${test_txt}
     CHECK_RESULT $? 0 1
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    rm -rf test.txt testdir
+    rm -rf ${test_txt} ${testdir}
     LOG_INFO "Finish environment cleanup!"
 }
 

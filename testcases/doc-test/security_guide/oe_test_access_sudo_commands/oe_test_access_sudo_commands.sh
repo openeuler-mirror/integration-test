@@ -32,12 +32,18 @@ function run_test() {
     useradd testuser
     grep "^testuser" /etc/passwd
     CHECK_RESULT $?
+    useradd example
+    grep "^example" /etc/passwd
+    CHECK_RESULT $?
     passwd testuser <<EOF
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
     usermod -g wheel testuser
     groups testuser | grep "testuser : wheel"
+    CHECK_RESULT $?
+    usermod -g wheel example
+    groups example | grep "example : wheel"
     CHECK_RESULT $?
     su - testuser <<EOF
     id 2>&1 >/home/testuser/id.log
@@ -56,13 +62,33 @@ EOF
     CHECK_RESULT $?
     grep "testuser is not in the sudoers file.  This incident will be reported." /home/testuser/testlog
     CHECK_RESULT $?
+    su - example <<EOF
+    id 2>&1 >/home/example/id.log
+    expect <<EOF
+        log_file /home/example/testlog
+        set timeout 15
+        spawn sudo ls /etc
+        expect {
+            "password" {
+                send "${NODE1_PASSWORD}\\r"
+            }
+        }
+        expect eof
+EOF
+    grep "example" /home/example/id.log
+    CHECK_RESULT $?
+    grep "Sorry, try again" /home/example/testlog
+    CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
+    sed -i 's/#%wheel/%wheel/g' /etc/sudoers
     usermod -g testuser testuser
     userdel -rf testuser
+    usermod -g example example
+    userdel -rf example
     LOG_INFO "Finish environment cleanup!"
 }
 

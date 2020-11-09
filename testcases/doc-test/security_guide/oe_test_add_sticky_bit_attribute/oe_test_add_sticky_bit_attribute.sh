@@ -18,33 +18,28 @@
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
-function pre_test() {
-    LOG_INFO "Start environmental preparation."
-    ls testdir && rm -rf testdir
-    LOG_INFO "End of environmental preparation!"
-}
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    mkdir testdir
+    testdir=$(mktemp -d)
     CHECK_RESULT $?
-    ls -l | grep testdir
+    test -d ${testdir}
     CHECK_RESULT $?
-    chmod 777 testdir
-    ls -l | grep testdir | grep "drwxrwxrwx"
+    chmod 777 ${testdir}
+    ls -al ${testdir} | awk 'NR==2' | grep "drwxrwxrwx"
     CHECK_RESULT $?
-    find / -type d -perm -0002 ! -perm -1000 -ls | grep -v proc | grep testdir
+    find /tmp -type d -perm -0002 ! -perm -1000 -ls | grep -v proc | grep ${testdir}
     CHECK_RESULT $?
-    chmod +t testdir
+    chmod +t ${testdir}
     CHECK_RESULT $?
-    ls -l | grep testdir | grep "drwxrwxrwt"
+    ls -al ${testdir} | awk 'NR==2' | grep "drwxrwxrwt"
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    rm -rf testdir
+    rm -rf ${testdir}
     LOG_INFO "Finish environment cleanup!"
 }
 

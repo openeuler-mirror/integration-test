@@ -20,28 +20,36 @@
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    ls test.txt && rm -rf test.txt
+    ls ${test_txt} && rm -rf ${test_txt}
     ls test1.txt && rm -rf test1.txt
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    touch test.txt
+    test_txt=$(mktemp)
+    ls -l ${test_txt}
     CHECK_RESULT $?
-    ls -l test.txt
+    ln -s ${test_txt} test1.txt
+    ls -l | grep "test1.txt -> ${test_txt}"
     CHECK_RESULT $?
-    ln -s test.txt test1.txt
-    ls -l | grep "test1.txt -> test.txt"
-    CHECK_RESULT $?
-    rm -rf test.txt
-    ls -l test.txt 2>&1 | grep "No such file or directory"
+    rm -rf ${test_txt}
+    ls -l ${test_txt} 2>&1 | grep "No such file or directory"
     CHECK_RESULT $?
     find ./ -type l -follow 2>/dev/null | grep test1.txt
     CHECK_RESULT $?
     rm -rf test1.txt
-    ls -l | grep "test1.txt -> test.txt"
+    ls -l | grep "test1.txt -> ${test_txt}"
     CHECK_RESULT $? 0 1
+    test_txt=$(mktemp)
+    ln ${test_txt} /tmp/test2.txt
+    CHECK_RESULT $?
+    CHECK_RESULT $(ls -li ${test_txt} | awk -F' ' '{print $1}') $(ls -li /tmp/test2.txt | awk -F' ' '{print $1}')
     LOG_INFO "Finish testcase execution."
+}
+function post_test() {
+    LOG_INFO "start environment cleanup."
+    rm -rf /tmp/test2.txt test1.txt ${test_txt}
+    LOG_INFO "Finish environment cleanup!"
 }
 main "$@"

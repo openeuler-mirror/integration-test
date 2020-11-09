@@ -21,6 +21,7 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
     grep "^test:" /etc/passwd && userdel -rf test
+    grep '#%wheel' /etc/sudoers && sed -i 's/#%wheel/%wheel/g' /etc/sudoers
     LOG_INFO "End of environmental preparation!"
 }
 
@@ -33,14 +34,36 @@ function run_test() {
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
+    useradd example
+    passwd example <<EOF
+${NODE1_PASSWORD}
+${NODE1_PASSWORD}
+EOF
     su - test -c "systemctl stop firewalld 2>&1" | grep 'Interactive authentication required'
     CHECK_RESULT $?
+    usermod -g wheel example
+    su - example <<EOF
+    expect <<EOF
+        log_file /home/example/result
+        set timeout 15
+        spawn sudo systemctl stop firewalld
+        expect {
+            "password" {
+                send "${NODE1_PASSWORD}\\r"
+            }
+        }
+        expect eof
+EOF
+    grep 'Interactive authentication required' /home/example/result
+    CHECK_RESULT $? 0 1
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
     userdel -rf test
+    usermod -g example example
+    userdel -rf example
     LOG_INFO "Finish environment cleanup!"
 }
 

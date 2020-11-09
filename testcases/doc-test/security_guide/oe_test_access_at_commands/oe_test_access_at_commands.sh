@@ -22,7 +22,6 @@ function pre_test() {
     LOG_INFO "Start environmental preparation."
     DNF_INSTALL at
     cp /etc/at.allow /etc/at.allow-bak
-    cp /etc/at.deny /etc/at.deny-bak
     grep "^testuser1:" /etc/passwd && userdel -rf testuser1
     grep "^testuser2:" /etc/passwd && userdel -rf testuser2
     LOG_INFO "End of environmental preparation!"
@@ -30,9 +29,6 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    rm -rf /etc/at.deny
-    ls -l /etc/at.deny 2>&1 | grep "No such file or directory"
-    CHECK_RESULT $?
     chown root:root /etc/at.allow
     chmod og-rwx /etc/at.allow
     ls -l /etc/at.allow | grep "root root" | grep '\-rw\-\-\-\-\-\-\-\.'
@@ -59,7 +55,6 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start cleanning environment."
     mv /etc/at.allow-bak /etc/at.allow -f
-    mv /etc/at.deny-bak /etc/at.deny -f
     DNF_REMOVE at
     userdel -rf testuser1
     userdel -rf testuser2
