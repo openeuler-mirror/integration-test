@@ -35,7 +35,8 @@ function run_test() {
 
         SSH_CMD "reboot" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 
-        ping -c 6 "${NODE2_IPV4}"
+        SLEEP_WAIT 5
+        ping -c 3 "${NODE2_IPV4}"
         CHECK_RESULT $? 0 1
 
         REMOTE_REBOOT_WAIT "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
@@ -43,6 +44,12 @@ function run_test() {
         ((repet_num++))
     done
     LOG_INFO "End to run test."
+}
+
+function post_test() {
+    LOG_INFO "Start to restore the test environment."
+    DNF_REMOVE
+    LOG_INFO "End to restore the test environment."
 }
 
 main "$@"

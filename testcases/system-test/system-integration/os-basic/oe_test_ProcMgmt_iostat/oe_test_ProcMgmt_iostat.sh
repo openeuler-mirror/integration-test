@@ -34,6 +34,8 @@ function run_test() {
     CHECK_RESULT $?
     iostat -k | grep -E 'avg-cpu|Device'
     CHECK_RESULT $?
+    iostat -p | grep Device | grep tps | grep kB_read
+    CHECK_RESULT $?
     iostat --help 2>&1 | grep Usage
     CHECK_RESULT $?
     LOG_INFO "End to run test."
@@ -41,7 +43,7 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    DNF_REMOVE sysstat
+    DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }
 

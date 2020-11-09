@@ -26,10 +26,22 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start to run test."
-    systemctl start sysstats
-    systemctl status sysstat | grep running
+    systemctl start sysstat
+    systemctl status sysstat | grep -E 'running|active'
     CHECK_RESULT $?
     sar -b | grep CPU
+    CHECK_RESULT $?
+    sar -u -o testcpulog 5 3 | grep CPU | grep user
+    CHECK_RESULT $?
+    test -f testcpulog
+    CHECK_RESULT $?
+    sar -r -o testmemlog 5 3 | grep kbmemfree | grep kbmemused
+    CHECK_RESULT $?
+    test -f testmemlog
+    CHECK_RESULT $?
+    sar -b -o testiolog 5 3 | grep tps | grep rtps
+    CHECK_RESULT $?
+    test -f testiolog
     CHECK_RESULT $?
     sar --help | grep Usage
     CHECK_RESULT $?
@@ -37,9 +49,9 @@ function run_test() {
 }
 
 function post_test() {
-    LOG_INFO "Start to restore the test environment." 
-    systemctl stop sysstat
-    DNF_REMOVE sysstat
+    LOG_INFO "Start to restore the test environment."
+    DNF_REMOVE
+    rm -rf test*log
     LOG_INFO "End to restore the test environment."
 }
 

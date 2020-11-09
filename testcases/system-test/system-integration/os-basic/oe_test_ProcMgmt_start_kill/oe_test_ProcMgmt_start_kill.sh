@@ -20,31 +20,50 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL ntp
+    DNF_INSTALL psmisc
+    echo "#!/bin/bash
+while true
+do
+sleep 1
+done" >mykilltest
+    chmod u+x mykilltest
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    systemctl start ntpd
-    systemctl status ntpd | grep running
+    ./mykilltest &
     CHECK_RESULT $?
-    sp_pid=$(pgrep -f "ntp")
-    if [ -z "$sp_pid" ]; then
-        LOG_ERROR "[ not find ntp pid ]"
-        CHECK_RESULT 0 1
-    else
-        kill -9 "$sp_pid"
-        SLEEP_WAIT 1
-    fi
-    pgrep -f "ntp"
-    CHECK_RESULT $? 1
+    sp_pid=$(pgrep -f "mykilltest")
+    kill -9 "$sp_pid"
+    CHECK_RESULT $?
+    pgrep -f "mykilltest"
+    CHECK_RESULT $? 0 1
+
+    ./mykilltest &
+    CHECK_RESULT $?
+    pgrep -f "mykilltest"
+    CHECK_RESULT $?
+    pkill mykilltest
+    CHECK_RESULT $?
+    pgrep -f "mykilltest"
+    CHECK_RESULT $? 0 1
+
+    ./mykilltest &
+    CHECK_RESULT $?
+    pgrep -f "mykilltest"
+    CHECK_RESULT $?
+    killall mykilltest
+    CHECK_RESULT $?
+    pgrep -f "mykilltest"
+    CHECK_RESULT $? 0 1
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    DNF_REMOVE ntp
+    DNF_REMOVE
+    rm -rf mykilltest
     LOG_INFO "End to restore the test environment."
 }
 

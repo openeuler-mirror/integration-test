@@ -18,11 +18,15 @@
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
+function pre_test() {
+    LOG_INFO "Start to prepare the test environment."
+    current_time=$(date "+%Y-%m-%d %H:%M:%S")
+    LOG_INFO "End to prepare the test environment."
+}
+
 function run_test() {
     LOG_INFO "Start to run test."
-    time=$(date "+%Y-%m-%d %H:%M:%S")
-    crontab -u root -l 2>&1 | grep 'no crontab'
-    CHECK_RESULT $?
+    crontab -l 2>&1 | grep 'no crontab' || crontab -r
     touch ~/globus.cron
     crontab ~/globus.cron
     CHECK_RESULT $?
@@ -41,7 +45,7 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    date -s "$time 1 minute"
+    date -s "$current_time 1 minute"
     crontab -r
     rm -rf /tmp/test.txt
     rm -rf ~/globus.cron

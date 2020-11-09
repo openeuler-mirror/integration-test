@@ -1,7 +1,7 @@
 oe_test_IOaccess_100Mfile
-oe_test_IOaccess_1GMfile
+oe_test_IOaccess_1Gfile
 oe_test_IOaccess_500Mfile
-oe_test_IOaccess_reboot
+oe_test_reboot
 oe_test_ProcMgmt_at
 oe_test_ProcMgmt_crontab_cmd
 oe_test_ProcMgmt_crontab_cronfile

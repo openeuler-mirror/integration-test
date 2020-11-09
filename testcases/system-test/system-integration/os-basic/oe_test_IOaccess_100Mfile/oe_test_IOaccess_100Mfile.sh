@@ -14,43 +14,49 @@
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-09
 # @License   :   Mulan PSL v2
-# @Desc      :   100M file continuous copy, create, compress, decompress test
+# @Desc      :   100M file continuous cp,dd,tar,zip,unzip
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start to run test."
     #100M
+    testfile1=myfile$(date +%Y%m%d)
+    testfile2=mycpfile$(date +%Y%m%d)
     for i in $(seq 1 10); do
-        dd if=/dev/zero of=test1 bs=1M count=100
+        dd if=/dev/urandom of=${testfile1} bs=1M count=100
         CHECK_RESULT $?
-        ls -l test1 | awk '{print$5}' | grep -w 104857600
+        ls -l ${testfile1} | awk '{print$5}' | grep -w 104857600
+        CHECK_RESULT $?
+        dd if=/dev/zero of=${testfile1} bs=1M count=100
+        CHECK_RESULT $?
+        ls -l ${testfile1} | awk '{print$5}' | grep -w 104857600
         CHECK_RESULT $?
     done
 
-    file_size=$(ls -l test1 | awk '{print$5}')
+    file_size=$(ls -l ${testfile1} | awk '{print$5}')
 
     for i in $(seq 1 10); do
-        rm -rf test2
-        cp test1 test2
+        rm -rf ${testfile2}
+        cp ${testfile1} ${testfile2}
         CHECK_RESULT $?
-        ls -l test2 | grep ${file_size}
+        ls -l ${testfile2} | grep ${file_size}
         CHECK_RESULT $?
     done
 
     for i in $(seq 1 10); do
-        rm -rf test1.zip
-        zip test1.zip test1
+        rm -rf ${testfile1}.zip
+        zip ${testfile1}.zip ${testfile1}
         CHECK_RESULT $?
-        ls test1.zip
+        ls ${testfile1}.zip
         CHECK_RESULT $?
     done
 
     for i in $(seq 1 10); do
-        rm -rf test1
-        unzip test1.zip
+        rm -rf ${testfile1}
+        unzip ${testfile1}.zip
         CHECK_RESULT $?
-        ls -l test1 | grep ${file_size}
+        ls -l ${testfile1} | grep ${file_size}
         CHECK_RESULT $?
     done
     LOG_INFO "End to run test."
@@ -58,7 +64,7 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf test1 test2 test1.zip
+    rm -rf ${testfile1} ${testfile2} ${testfile1}.zip
     LOG_INFO "End to restore the test environment."
 }
 
