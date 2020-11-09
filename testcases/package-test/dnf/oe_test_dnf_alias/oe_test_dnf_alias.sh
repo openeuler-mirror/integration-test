@@ -26,7 +26,7 @@ function run_test() {
     dnf -y install tree
     dnf -y rm tree
     CHECK_RESULT $? 0 0
-    rpm -q vim-enhanced
+    rpm -q tree
     CHECK_RESULT $? 1 0
     dnf alias delete rm
     dnf alias list | grep rm

@@ -38,12 +38,12 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start restore the test environment."
-    systemctl disable dnf-automatic-notifyonly.timer
     systemctl stop dnf-automatic-notifyonly.timer
-    systemctl disable dnf-automatic-download.timer
+    systemctl disable dnf-automatic-notifyonly.timer
     systemctl stop dnf-automatic-download.timer
-    systemctl disable dnf-automatic-install.timer
+    systemctl disable dnf-automatic-download.timer
     systemctl stop dnf-automatic-install.timer
+    systemctl disable dnf-automatic-install.timer
     LOG_INFO "End of restore the test environment."
 }
 

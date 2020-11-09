@@ -20,15 +20,15 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf check 
+    dnf check || dnf check 2>&1 | grep "Error: Check discovered" | grep "problem(s)"
     CHECK_RESULT $? 0 0   
-    dnf check --dependencies
-    CHECK_RESULT $? 1 0
-    dnf check --duplicates
+    dnf check --dependencies || dnf check --dependencies | grep "Error: Check discovered" | grep "problem(s)"
+    CHECK_RESULT $? 0 0
+    dnf check --duplicates || dnf check --duplicates | grep "Error: Check discovered" | grep "problem(s)"
     CHECK_RESULT $? 0 0    
-    dnf check --obsoleted
+    dnf check --obsoleted || dnf check --obsoleted | grep "Error: Check discovered" | grep "problem(s)"
     CHECK_RESULT $? 0 0   
-    dnf check --provides
+    dnf check --provides || dnf check --provides | grep "Error: Check discovered" | grep "problem(s)"
     CHECK_RESULT $? 0 0
     LOG_INFO "End of the test."
 }
