@@ -22,6 +22,7 @@ public class TestJunit extends TestCase  {
       System.out.println("Updated Test Case Name = "+ newName);
    }
 
+   @After
    public void tearDown() {
       //tearDown used to close the connection or clean up activities
    }
