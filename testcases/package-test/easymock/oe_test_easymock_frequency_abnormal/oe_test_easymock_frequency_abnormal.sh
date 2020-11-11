@@ -3,18 +3,18 @@
 # Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
-#             http://license.coscl.org.cn/MulanPSL2
+#          http://license.coscl.org.cn/MulanPSL2
 # THIS PROGRAM IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
 # EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author     :   tangxiaolan
-# @Contact    :   tangxiaolan0712@163.com
-# @Date       :   2020/5/14
-# @License    :   Mulan PSL v2
-# @Desc       :   The number of actual calls to the mock object method is inconsistent with the set number
+# @Author    :   tangxiaolan
+# @Contact   :   tangxiaolan0712@163.com
+# @Date      :   2020/5/14
+# @License   :   Mulan PSL v2
+# @Desc      :   The number of actual calls to the mock object method is inconsistent with the set number
 # ############################################
 
 source "../common/common_easymock.sh"
