@@ -1,0 +1,10 @@
+oe_test_dnf_alias
+oe_test_dnf_all-repos
+oe_test_dnf_assumenu
+oe_test_dnf_automatic
+oe_test_dnf_autoremvove
+oe_test_dnf_best
+oe_test_dnf_cacheonly
+oe_test_dnf_check
+oe_test_dnf_check-update
+oe_test_dnf_clean
