@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestMockHttpServletRquest {
-	IMocksControl control = EasyMock.createControl();
+    IMocksControl control = EasyMock.createControl();
 	HttpServletRequest request = null;
 	HttpSession session = null;
 	@Before
@@ -28,7 +28,6 @@ public class TestMockHttpServletRquest {
 		control.replay(); 
 		String name=request.getParameter("name");
 		System.out.println(name);
-		HttpSession session2 =request.getSession();
 		String landy=(String)session.getAttribute("name");
 		System.out.println("landy:"+landy);
 		Assert.assertEquals(landy, name);

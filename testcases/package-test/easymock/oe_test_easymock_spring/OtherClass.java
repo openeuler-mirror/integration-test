@@ -1,5 +1,5 @@
 public class OtherClass {
-   public int fun() {
-      return 0;
-   }
+    public int fun() {
+        return 0;
+    }
 }

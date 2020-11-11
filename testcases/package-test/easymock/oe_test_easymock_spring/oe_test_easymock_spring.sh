@@ -29,7 +29,7 @@ function run_test() {
     LOG_INFO "Start to run test."
     javac -classpath /usr/share/java/*:/usr/share/java/hamcrest/*:/usr/share/java/springframework/*:/usr/share/java/cglib/*:/usr/share/java/objenesis/*: -d . OtherClass.java OurClass.java OurClassTest.java
     CHECK_RESULT $?
-    java -classpath /usr/share/java/*:/usr/share/java/hamcrest/*:/usr/share/java/springframework/*:/usr/share/java/cglib/cglib.jar:/usr/share/java/objenesis/objenesis.jar: org.junit.runner.JUnitCore OurClassTest | grep "OK (1 test)"
+    java -classpath /usr/share/java/*:/usr/share/java/hamcrest/*:/usr/share/java/springframework/*:/usr/share/java/cglib/*:/usr/share/java/objenesis/*: org.junit.runner.JUnitCore OurClassTest | grep "OK (1 test)"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
