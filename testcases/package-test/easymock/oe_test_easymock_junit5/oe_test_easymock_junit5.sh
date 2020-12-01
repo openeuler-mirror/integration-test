@@ -34,8 +34,8 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    DNF_REMOVE "maven java* easymock junit"
-    rm -rf target
+    DNF_REMOVE maven
+    clear_env
     LOG_INFO "End to restore the test environment."
 }
 

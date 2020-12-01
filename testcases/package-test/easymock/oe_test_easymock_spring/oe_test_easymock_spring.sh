@@ -10,32 +10,33 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   liujingjing
-# @Contact   :   liujingjing25812@163.com
+# @Author    :   tangxiaolan
+# @Contact   :   tangxiaolan0712@163.com
 # @Date      :   2020/5/14
 # @License   :   Mulan PSL v2
-# @Desc      :   Easymock simulates unimplemented interfaces and uses JUnit assertion to verify the return value of mock object method
+# @Desc      :   Easymock combined with spring to simulate an unimplemented class
 # ############################################
 
 source "../common/common_easymock.sh"
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
+    DNF_INSTALL springframework-test
     deploy_env
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    compile_java
+    javac -classpath /usr/share/java/*:/usr/share/java/hamcrest/*:/usr/share/java/springframework/*:/usr/share/java/cglib/*:/usr/share/java/objenesis/*: -d . OtherClass.java OurClass.java OurClassTest.java
     CHECK_RESULT $?
-    execute_java | grep -v JUnit | grep -v Time | grep -v "^$" >actual_result
-    diff actual_result expect_result
+    java -classpath /usr/share/java/*:/usr/share/java/hamcrest/*:/usr/share/java/springframework/*:/usr/share/java/cglib/*:/usr/share/java/objenesis/*: org.junit.runner.JUnitCore OurClassTest | grep "OK (1 test)"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
+    DNF_REMOVE springframework-test
     clear_env
     LOG_INFO "End to restore the test environment."
 }
