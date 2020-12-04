@@ -23,7 +23,6 @@ function pre_test() {
     DNF_INSTALL "chrony ntpstat ntp"
     systemctl start ntpd
     systemctl start chronyd
-    systemctl enable chronyd
     LOG_INFO "End to prepare the test environment."
 }
 

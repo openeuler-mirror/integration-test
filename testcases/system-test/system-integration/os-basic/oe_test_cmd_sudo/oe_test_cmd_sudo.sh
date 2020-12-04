@@ -30,9 +30,9 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start to run test."
-    sudo -l | grep "User root" | grep "commands on $(hostname)"
+    sudo -l | grep "commands on" | grep "User root"
     CHECK_RESULT $?
-    su - test -c "sudo -l --stdin | grep 'User test' | grep 'commands on $(hostname)'"
+    su - test -c "sudo -l --stdin | grep 'commands on' | grep 'User test'"
     CHECK_RESULT $?
     sudo --help | grep "usage"
     CHECK_RESULT $?

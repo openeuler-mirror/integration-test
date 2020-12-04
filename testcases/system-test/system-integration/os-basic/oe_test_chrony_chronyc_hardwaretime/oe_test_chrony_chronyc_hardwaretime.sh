@@ -22,7 +22,6 @@ function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL "chrony ntpstat"
     systemctl start chronyd
-    systemctl enable chronyd
     LOG_INFO "End to prepare the test environment."
 }
 
@@ -31,7 +30,7 @@ function run_test() {
     systemctl status chronyd | grep running
     CHECK_RESULT $?
 
-    SLEEP_WAIT
+    SLEEP_WAIT 5
     chronyc ntpdata | grep "Local address" | grep "${NODE1_IPV4}"
     CHECK_RESULT $?
 

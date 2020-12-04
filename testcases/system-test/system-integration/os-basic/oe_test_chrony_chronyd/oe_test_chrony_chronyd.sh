@@ -27,7 +27,6 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start to run test."
     systemctl start chronyd
-    systemctl enable chronyd
     systemctl status chronyd | grep running
     CHECK_RESULT $?
     systemctl is-enabled chronyd | grep enabled

@@ -36,7 +36,7 @@ function run_test() {
     CHECK_RESULT $?
     kill -9 ${testpid}
     CHECK_RESULT $?
-    ps -ef | grep ${testpid}
+    ps -ef | grep -v grep | grep ${testpid}
     CHECK_RESULT $? 0 1
     ps -ef | grep UID | grep PID | grep PPID
     CHECK_RESULT $?

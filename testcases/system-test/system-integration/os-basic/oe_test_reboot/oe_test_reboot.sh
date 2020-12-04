@@ -21,6 +21,7 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
+    EXECUTE_T="120m"
     DNF_INSTALL dmidecode
     LOG_INFO "End to prepare the test environment."
 }
@@ -35,8 +36,7 @@ function run_test() {
 
         SSH_CMD "reboot" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 
-        SLEEP_WAIT 5
-        ping -c 3 "${NODE2_IPV4}"
+        SSH_CMD "ls" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
         CHECK_RESULT $? 0 1
 
         REMOTE_REBOOT_WAIT "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
