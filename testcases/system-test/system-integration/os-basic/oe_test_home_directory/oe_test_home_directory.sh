@@ -22,7 +22,7 @@ function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     grep "testuser:" /etc/passwd && userdel -rf testuser
     grep "testuser:" /etc/group && groupdel testuser
-    test -f /home/new_test && rm -rf /home/new_test
+    test -d /home/new_test && rm -rf /home/new_test
     LOG_INFO "End to prepare the test environment."
 }
 
@@ -31,7 +31,6 @@ function run_test() {
     useradd testuser
     mkdir /home/new_test -p
     touch /home/new_test/testfile.txt
-    CHECK_RESULT $?
     grep testuser /etc/passwd | awk -F: '{print $6}' | grep "/home/testuser"
     CHECK_RESULT $?
     usermod -d /home/new_test testuser

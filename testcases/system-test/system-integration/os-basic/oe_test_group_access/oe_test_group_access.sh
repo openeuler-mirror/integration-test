@@ -22,7 +22,7 @@ function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     grep "testuser1:" /etc/passwd && userdel -rf testuser1
     grep "myproject:" /etc/group && groupdel myproject
-    test -f /opt/myproject && rm -rf /opt/myproject
+    test -d /opt/myproject && rm -rf /opt/myproject
     LOG_INFO "End to prepare the test environment."
 }
 

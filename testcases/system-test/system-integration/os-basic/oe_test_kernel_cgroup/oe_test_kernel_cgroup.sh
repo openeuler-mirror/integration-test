@@ -27,7 +27,7 @@ do
     sleep 1
 done" >testcgroup.sh
     sh testcgroup.sh &
-    pid=$(pgrep -f testcgroup.sh)
+    pid=$(pgrep -f "sh testcgroup.sh")
     mkdir /sys/fs/cgroup/memory/example
     echo 1000000 >/sys/fs/cgroup/memory/example/memory.limit_in_bytes
     CHECK_RESULT $?
