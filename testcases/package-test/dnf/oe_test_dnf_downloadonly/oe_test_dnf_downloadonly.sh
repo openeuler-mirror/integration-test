@@ -9,34 +9,29 @@
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
 
-# #############################################
-# @Author    :   tangxiaolan
-# @Contact   :   tangxiaolan0712@163.com
-# @Date      :   2020/5/14
+# ##################################
+# @Author    :   zengcongwei
+# @Contact   :   735811396@qq.com
+# @Date      :   2020/5/13
 # @License   :   Mulan PSL v2
-# @Desc      :   Easymock with JUnit5
-# ############################################
+# @Desc      :   Test "--downloadonly" option
+# ##################################
 
-source "../common/common_easymock.sh"
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    deploy_env
-    DNF_INSTALL maven
-    LOG_INFO "End to prepare the test environment."
-}
+source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
-    mvn test | grep "Tests run: 1, Failures: 0, Errors: 0, Skipped: 0"$'\n'"BUILD SUCCESS"
-    CHECK_RESULT $?
-    LOG_INFO "End to run test."
+    dnf --downloadonly -y install tree
+    CHECK_RESULT $? 0 0
+    find /var/cache/dnf/ -name "tree*"
+    CHECK_RESULT $? 0 0
+    LOG_INFO "End of the test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    DNF_REMOVE maven
-    clear_env
-    LOG_INFO "End to restore the test environment."
+    dnf clean packages
+    LOG_INFO "Finish restoring the test environment."
 }
 
 main "$@"

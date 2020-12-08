@@ -9,35 +9,32 @@
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
 
-# #############################################
-# @Author    :   liujingjing
-# @Contact   :   liujingjing25812@163.com
-# @Date      :   2020/5/14
-# @License   :   Mulan PSL v2
-# @Desc      :   Easymock simulates unimplemented interfaces and uses JUnit assertion to verify the return value of mock object method
-# ############################################
+# ##################################
+# @Author    :   zengcongwei
+# @Contact   :   735811396@qq.com
+# @Date      :   2020/5/12
+# @Desc      :   Test "dnf distro-sync" command
+# ##################################
 
-source "../common/common_easymock.sh"
+source "$OET_PATH/libs/locallibs/common_lib.sh"
+
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    deploy_env
-    LOG_INFO "End to prepare the test environment."
+    dnf install -y tree
+    LOG_INFO "Finish preparing the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    compile_java
-    CHECK_RESULT $?
-    execute_java | grep -v JUnit | grep -v Time | grep -v "^$" >actual_result
-    diff actual_result expect_result
-    CHECK_RESULT $?
-    LOG_INFO "End to run test."
+    dnf distro-sync tree
+    CHECK_RESULT $? 0 0
+    LOG_INFO "End of the test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    clear_env
-    LOG_INFO "End to restore the test environment."
+    dnf -y remove tree
+    LOG_INFO "Finish restoring the test environment."
 }
 
 main "$@"
