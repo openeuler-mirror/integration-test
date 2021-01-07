@@ -13,20 +13,15 @@
 # @Author    :   zengcongwei
 # @Contact   :   735811396@qq.com
 # @Date      :   2020/5/12
-# @Desc      :   Test "dnf distro-sync" command
+# @Desc      :   Test "dnf history" command
 # ##################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    dnf install -y tree
-    LOG_INFO "Finish preparing the test environment."
-}
-
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf distro-sync -y tree
+    dnf -y install tree
+    dnf history | grep "install tree"
     CHECK_RESULT $? 0 0
     LOG_INFO "End of the test."
 }

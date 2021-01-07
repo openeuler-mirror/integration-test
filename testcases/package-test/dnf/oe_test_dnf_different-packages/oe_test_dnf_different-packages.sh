@@ -24,6 +24,7 @@ function run_test() {
     dnf -y install vim &
     dnf -y install tree
     CHECK_RESULT $? 0 0
+    SLEEP_WAIT 3
     rpm -q vim-enhanced
     CHECK_RESULT $? 0 0
     rpm -q tree
