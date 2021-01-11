@@ -27,7 +27,7 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start to run test."
     systemctl enable --now tuned
-    tuned-adm active | grep 'Current active profile' | grep -i virtual-guest
+    tuned-adm active | grep 'Current active profile' | grep -iE 'virtual-guest|throughput-performance'
     CHECK_RESULT $?
     tuned-adm verify | grep succeeded
     CHECK_RESULT $?

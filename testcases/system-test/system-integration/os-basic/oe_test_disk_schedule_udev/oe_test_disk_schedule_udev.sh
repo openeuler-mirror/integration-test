@@ -28,6 +28,7 @@ function config_params() {
 function run_test() {
     LOG_INFO "Start to run test."
     WWID=$(udevadm info --attribute-walk --name=/dev/"${TEST_DISK}" | grep wwid)
+    cp /etc/udev/rules.d/99-scheduler.rules /etc/udev/rules.d/99-scheduler.rules.bak
     echo "ACTION ==\"add|change\",SUBSYSTEM==\"block\",$WWID,ATTR{queue/scheduler}=\"mq-deadline\"" >/etc/udev/rules.d/99-scheduler.rules
     udevadm control --reload-rules
     CHECK_RESULT $?
@@ -42,6 +43,7 @@ function post_test() {
     LOG_INFO "Start to restore the test environment."
     echo "${old_scheduler}" >/sys/block/"$TEST_DISK"/queue/scheduler
     rm -rf /etc/udev/rules.d/99-scheduler.rules
+    mv /etc/udev/rules.d/99-scheduler.rules.bak /etc/udev/rules.d/99-scheduler.rules
     udevadm control --reload-rules
     udevadm trigger --type=devices --action=change
     LOG_INFO "End to restore the test environment."

@@ -52,7 +52,7 @@ radeon_powersave=dpm-balanced, auto" >/etc/tuned/my-profile/tuned.conf
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    DNF_REMOVE tuned
+    DNF_REMOVE
     rm -rf tuned_log
     LOG_INFO "End to restore the test environment."
 }
