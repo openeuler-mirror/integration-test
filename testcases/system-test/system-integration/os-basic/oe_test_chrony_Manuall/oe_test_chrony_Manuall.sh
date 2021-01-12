@@ -14,40 +14,31 @@
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-09
 # @License   :   Mulan PSL v2
-# @Desc      :   View process status-ps
+# @Desc      :   Manually adjust the system clock test-makestep
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    echo "#!/bin/bash
-while true
-do
-sleep 1
-done" >mypstest
-    chmod u+x mypstest
+    DNF_INSTALL "chrony ntpstat"
+    systemctl start chronyd
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    ./mypstest &
-    testpid=$(ps -aux | grep mypstest | grep -v grep | awk '{print$2}')
+    systemctl status chronyd | grep running
     CHECK_RESULT $?
-    kill -9 ${testpid}
-    CHECK_RESULT $?
-    ps -ef | grep -v grep | grep ${testpid}
-    CHECK_RESULT $? 0 1
-    ps -ef | grep UID | grep PID | grep PPID
-    CHECK_RESULT $?
-    ps --help | grep Usage
+    chronyc makestep | grep "OK"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf mytest
+    systemctl stop chronyd
+    DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }
+
 main "$@"

@@ -10,44 +10,51 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   doraemon2020
-# @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Author    :   Classicriver_jia
+# @Contact   :   classicriver_jia@foxmail.com
+# @Date      :   2020-4-9
 # @License   :   Mulan PSL v2
-# @Desc      :   View process status-ps
-# ############################################
+# @Desc      :   Create a new tuned profile
+# #############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    echo "#!/bin/bash
-while true
-do
-sleep 1
-done" >mypstest
-    chmod u+x mypstest
+    DNF_INSTALL tuned
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    ./mypstest &
-    testpid=$(ps -aux | grep mypstest | grep -v grep | awk '{print$2}')
+    systemctl enable --now tuned
     CHECK_RESULT $?
-    kill -9 ${testpid}
+    mkdir /etc/tuned/my-profile
+    old_profile=$(tuned-adm active | awk '{print $4}')
+    echo "[main]
+summary=General non-specialized tuned profile
+[cpu]
+governor=conservative
+energy_perf_bias=normal
+[audio]
+timeout=10
+[video]
+radeon_powersave=dpm-balanced, auto" >/etc/tuned/my-profile/tuned.conf
+    tuned-adm profile my-profile
     CHECK_RESULT $?
-    ps -ef | grep -v grep | grep ${testpid}
-    CHECK_RESULT $? 0 1
-    ps -ef | grep UID | grep PID | grep PPID
+    tuned-adm active | grep "my-profile"
     CHECK_RESULT $?
-    ps --help | grep Usage
+    tuned-adm verify | grep "succeeded"
+    CHECK_RESULT $?
+    tuned-adm profile "$old_profile"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf mytest
+    DNF_REMOVE
+    rm -rf tuned_log
     LOG_INFO "End to restore the test environment."
 }
-main "$@"
+
+main $@

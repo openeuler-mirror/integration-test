@@ -14,40 +14,38 @@
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-09
 # @License   :   Mulan PSL v2
-# @Desc      :   View process status-ps
+# @Desc      :   Date command line test
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    echo "#!/bin/bash
-while true
-do
-sleep 1
-done" >mypstest
-    chmod u+x mypstest
+    time=$(date "+%Y-%m-%d %H:%M:%S")
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    ./mypstest &
-    testpid=$(ps -aux | grep mypstest | grep -v grep | awk '{print$2}')
+    date01=$(date | awk -F ' ' '{print $1,$2,$3}')
+    date -d 2020-01-01
+    date02=$(date | awk -F ' ' '{print $1,$2,$3}')
+    test "$date01"x = "$date02"x
     CHECK_RESULT $?
-    kill -9 ${testpid}
+    date -s "9:30:00" | grep "9:30:00"
     CHECK_RESULT $?
-    ps -ef | grep -v grep | grep ${testpid}
-    CHECK_RESULT $? 0 1
-    ps -ef | grep UID | grep PID | grep PPID
+    date -s "2015-02-04 9:30:00" | grep "9:30:00" | grep 2015 | grep -i feb | grep -i wed
     CHECK_RESULT $?
-    ps --help | grep Usage
+    hwclock -w
+    timedatectl | grep -E 'rtc time|RTC time:' | grep "2015-02-04"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf mytest
-    LOG_INFO "End to restore the test environment."
+    date -s "$time"
+    hwclock -w
+    LOG_INFO "Finish restoring the test environment."
 }
+
 main "$@"

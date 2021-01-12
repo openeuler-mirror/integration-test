@@ -14,40 +14,47 @@
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-09
 # @License   :   Mulan PSL v2
-# @Desc      :   View process status-ps
+# @Desc      :   Use chronyc to control chronyd
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    echo "#!/bin/bash
-while true
-do
-sleep 1
-done" >mypstest
-    chmod u+x mypstest
+    DNF_INSTALL "chrony"
+    systemctl start chronyd
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    ./mypstest &
-    testpid=$(ps -aux | grep mypstest | grep -v grep | awk '{print$2}')
+    systemctl status chronyd | grep running
     CHECK_RESULT $?
-    kill -9 ${testpid}
+    rm -rf testlog
+    expect -d <<ENF0
+    spawn chronyc
+    log_file testlog
+    expect "chronyc>"
+    send "help\\r"
+    expect "chronyc>"   
+    send "sourcestats -v\\r"
+    expect "chronyc>"              
+    send "quit\\r"
+ENF0
     CHECK_RESULT $?
-    ps -ef | grep -v grep | grep ${testpid}
-    CHECK_RESULT $? 0 1
-    ps -ef | grep UID | grep PID | grep PPID
+    grep -i Manual testlog
     CHECK_RESULT $?
-    ps --help | grep Usage
+
+    grep "Name/IP Address" testlog
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf mytest
+    rm -rf testlog
+    systemctl stop chronyd
+    DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }
+
 main "$@"
