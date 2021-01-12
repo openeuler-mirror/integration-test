@@ -26,7 +26,7 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start to run test."
-    compile_java 
+    compile_java
     CHECK_RESULT $?
     execute_java >actual_result
     diff actual_result expect_result

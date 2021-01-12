@@ -32,10 +32,10 @@ function run_test() {
     execute_java TestRunnerTotal | grep -vE "TestJunit1Time|TestJunit2Time|TestJunit3Time|TestTotalTime" >actual_result
     diff actual_result expect_result1
     CHECK_RESULT $?
-    execute_java| grep -v "SuiteTestTime" >actual_result
+    execute_java | grep -v "SuiteTestTime" >actual_result
     diff actual_result expect_result2
     CHECK_RESULT $?
-    execute_java JunitTestSuite| grep -v "JunitTestSuiteTime" >actual_result
+    execute_java JunitTestSuite | grep -v "JunitTestSuiteTime" >actual_result
     diff actual_result expect_result3
     CHECK_RESULT $?
     LOG_INFO "End of the test."
