@@ -26,6 +26,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
+    grep "^PermitEmptyPasswords no" /etc/ssh/sshd_config
+    CHECK_RESULT $?
     useradd testuser
     passwd -d testuser
     grep "^testuser" /etc/passwd

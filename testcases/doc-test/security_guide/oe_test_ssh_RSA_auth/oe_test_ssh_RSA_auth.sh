@@ -20,6 +20,8 @@
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function run_test() {
     LOG_INFO "Start executing testcase."
+    grep "^RSAAuthentication yes" /etc/ssh/sshd_config
+    CHECK_RESULT $?
     expect <<EOF
         set timeout 15
         spawn ssh-keygen
@@ -54,11 +56,10 @@ EOF
             "password" {
             	send "${NODE2_PASSWORD}\\r"
             }
-    }
+        }
         expect eof
 EOF
-    SSH_SCP ${NODE2_USER}@${NODE2_IPV4}:/root/.ssh/authorized_keys /home ${NODE2_PASSWORD}
-    grep ssh-rsa /home/authorized_keys
+    SSH_CMD "grep ssh-rsa /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     CHECK_RESULT $?
     expect <<EOF
         set timeout 15
@@ -74,7 +75,6 @@ EOF
     grep "System information as of time" testlog
     CHECK_RESULT $?
     SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    rm -rf /home/authorized_keys
     expect <<EOF
         set timeout 15
         spawn ssh-keygen -t dsa
@@ -112,8 +112,7 @@ EOF
         }
         expect eof
 EOF
-    SSH_SCP ${NODE2_USER}@${NODE2_IPV4}:/root/.ssh/authorized_keys /home ${NODE2_PASSWORD}
-    grep ssh-dss /home/authorized_keys
+    SSH_CMD "grep ssh-dss /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     CHECK_RESULT $?
     expect <<EOF
         set timeout 15
@@ -134,7 +133,7 @@ EOF
 function post_test() {
     LOG_INFO "Start cleanning environment."
     SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    rm -rf /root/.ssh/id_rsa* testlog1 testlog /home/authorized_keys /root/.ssh/id_dsa*
+    rm -rf /root/.ssh/id_rsa* testlog1 testlog /root/.ssh/id_dsa*
     LOG_INFO "Finish environment cleanup!"
 }
 

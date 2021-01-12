@@ -26,6 +26,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
+    grep "^AllowAgentForwarding yes" /etc/ssh/sshd_config
+    CHECK_RESULT $?
     expect <<EOF
         set timeout 15
         spawn ssh-keygen

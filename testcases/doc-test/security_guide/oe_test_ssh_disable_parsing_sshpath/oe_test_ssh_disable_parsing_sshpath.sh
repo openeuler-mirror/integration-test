@@ -27,6 +27,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
+    grep "^PermitUserEnvironment no" /etc/ssh/sshd_config
+    CHECK_RESULT $?
     SSH_CMD "touch /root/.ssh/environment" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "chmod 600 /root/.ssh/environment" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "echo TESTENV=testenv >>/root/.ssh/environment" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}

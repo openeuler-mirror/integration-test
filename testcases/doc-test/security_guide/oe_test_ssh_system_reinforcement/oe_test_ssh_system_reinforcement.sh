@@ -27,6 +27,12 @@ function run_test() {
     CHECK_RESULT $?
     grep "^X11Forwarding no" /etc/ssh/sshd_config
     CHECK_RESULT $?
+    grep "^IgnoreRhosts yes" /etc/ssh/sshd_config
+    CHECK_RESULT $?
+    grep "^RhostsRSAAuthentication no" /etc/ssh/sshd_config
+    CHECK_RESULT $?
+    grep "^Subsystem sftp /usr/libexec/openssh/sftp-server -l INFO -f AUTH" /etc/ssh/sshd_config
+    CHECK_RESULT $?
     grep "^HostbasedAuthentication no" /etc/ssh/sshd_config
     CHECK_RESULT $?
     grep "^Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-gcm@openssh.com,aes256-gcm@openssh.com,chacha20-poly1305@openssh.com" /etc/ssh/sshd_config
@@ -43,7 +49,8 @@ function run_test() {
     CHECK_RESULT $?
     grep "^PermitTunnel no" /etc/ssh/sshd_config
     CHECK_RESULT $?
-    grep "^KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256" /etc/ssh/sshd_config
+    grep "^KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1,diffie-hellman-group-exchange-sha256" /etc/ssh/sshd_config ||
+        grep "^KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256" /etc/ssh/sshd_config
     CHECK_RESULT $?
     grep "^KexAlgorithms" /etc/ssh/ssh_config
     CHECK_RESULT $? 0 1

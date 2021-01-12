@@ -26,6 +26,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
+    SSH_CMD "umask | grep 0022" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    CHECK_RESULT $?
     SSH_CMD "echo 'umask 0077' >>/etc/bashrc" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "while read line;do echo 'umask 0077' >>/etc/profile.d/\${line};done </home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "mkdir /home/test1;ls -l /home | grep test1" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER} | tail -n 1 | grep 'drwx\-\-\-\-\-\-'
@@ -37,7 +39,8 @@ function run_test() {
 function post_test() {
     LOG_INFO "start environment cleanup."
     SSH_CMD "mv /etc/bashrc-bak /etc/bashrc;while read line;do mv /etc/profile.d/\${line}-bak /etc/profile.d/\${line};done </home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "rm -rf /home/log /home/log1 /home/test1 /home/test2 /home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    SSH_CMD "rm -rf /home/log /home/log1 /home/test1 /home/test2 /home/tmp
+    umask 0022" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     LOG_INFO "Finish environment cleanup!"
 }
 

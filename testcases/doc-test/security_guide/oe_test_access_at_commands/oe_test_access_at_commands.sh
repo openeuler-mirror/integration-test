@@ -20,8 +20,6 @@
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    DNF_INSTALL at
-    cp /etc/at.allow /etc/at.allow-bak
     grep "^testuser1:" /etc/passwd && userdel -rf testuser1
     grep "^testuser2:" /etc/passwd && userdel -rf testuser2
     LOG_INFO "End of environmental preparation!"
@@ -29,8 +27,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    chown root:root /etc/at.allow
-    chmod og-rwx /etc/at.allow
+    ls /etc/at.deny
+    CHECK_RESULT $? 0 1
     ls -l /etc/at.allow | grep "root root" | grep '\-rw\-\-\-\-\-\-\-\.'
     CHECK_RESULT $?
     useradd testuser1

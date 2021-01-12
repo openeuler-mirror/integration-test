@@ -12,79 +12,65 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/5/29
+# @Date      :   2020/05/29
 # @License   :   Mulan PSL v2
-# @Desc      :   SSH checks the permissions and ownership of the user home directory before receiving the login request
+# @Desc      :   Initialize path when switching users with Su
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    grep "^testuser:" /etc/passwd && userdel -rf testuser
+    grep "^test:" /etc/passwd && userdel -rf test
+    ls testlog && rm -rf testlog
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep "^StrictModes yes" /etc/ssh/sshd_config
-    CHECK_RESULT $?
-    useradd testuser
-    CHECK_RESULT $?
-    passwd testuser <<EOF
+    useradd test
+    passwd test <<EOF
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
-    chown root:root /home/testuser
-    ls -l /home | grep testuser | grep "root"
-    CHECK_RESULT $?
-    expect <<EOF
+    echo "echo \$PATH" >/tmp/path.sh
+    chown test:test /tmp/path.sh
+    expect <<EOF1
+     log_file testlog
         set timeout 15
-        log_file testlog
-        spawn ssh testuser@${NODE1_IPV4}
+        spawn ssh test@127.0.0.1
         expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "password:" {
+            "assword:" {
                 send "${NODE1_PASSWORD}\\r"
             }
         }
-        expect eof
-EOF
-    grep "Could not chdir to home directory /home/testuser: Permission denied" testlog
-    CHECK_RESULT $?
-    chmod 200 /home/testuser
-    ls -l /home | grep testuser | grep 'd\-w\-\-\-\-\-\-\-\.'
-    CHECK_RESULT $?
-    expect <<EOF
-        set timeout 15
-        log_file testlog1
-        spawn ssh testuser@${NODE1_IPV4}
         expect {
-            "*yes/no*" {
-                send "yes\\r"
+            "]" {
+                send "sh /tmp/path.sh\\r"
             }
         }
         expect {
-            "password:" {
-                send "${NODE1_PASSWORD}\\r"
+            "]" {
+                send "exit\\r"
             }
         }
         expect eof
-EOF
-    grep "Could not chdir to home directory /home/testuser: Permission denied" testlog1
+        catch wait result;
+        exit [lindex \$result 3]
+EOF1
+    grep '/home/test/.local/bin:/home/test/bin' testlog
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
-    LOG_INFO "Start cleanning environment."
-    chown testuser:testuser /home/testuser
-    chmod 700 /home/testuser
-    userdel -rf testuser
-    rm -rf testlog testlog1
+    LOG_INFO "start environment cleanup."
+    userdel -rf test
+    rm -rf testlog /tmp/path.sh
     LOG_INFO "Finish environment cleanup!"
 }
 

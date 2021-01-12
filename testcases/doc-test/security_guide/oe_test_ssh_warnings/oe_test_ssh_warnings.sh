@@ -12,66 +12,48 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/5/29
+# @Date      :   2020/05/27
 # @License   :   Mulan PSL v2
-# @Desc      :   Login authentication with PAM
+# @Desc      :   Verify warnings for default network remote login
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
+
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep "^UsePAM yes" /etc/ssh/sshd_config
+    grep "Authorized users only. All activities may be monitored and reported." /etc/issue.net
     CHECK_RESULT $?
-    useradd testuser
-    passwd testuser <<EOF
-${NODE1_PASSWORD}
-${NODE1_PASSWORD}
-EOF
     expect <<EOF1
-        log_file testlog
+        log_file log
         set timeout 15
-        spawn ssh testuser@${NODE1_IPV4} 
+        spawn ssh root@127.0.0.1 
         expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "password:" {
-                send "test\\r"
-                exp_continue
-            }
-        }
-        expect eof
-EOF1
-    [ $(grep 'Permission denied' testlog | wc -l) -eq 3 ]
-    CHECK_RESULT $?
-    SLEEP_WAIT 65
-    expect <<EOF1
-        log_file testlog1
-        set timeout 15
-        spawn ssh testuser@${NODE1_IPV4} 
-        expect {
-            "*yes/no*" {
-                send "yes\\r"
-            }
-        }
-        expect {
-            "password:" {
+            "assword:" {
                 send "${NODE1_PASSWORD}\\r"
             }
         }
+        expect {
+            "]" {
+                send "exit\\r"
+            }
+        }
         expect eof
+        catch wait result;
+        exit [lindex \\\$result 3]
 EOF1
-    grep 'Last failed login' testlog1
+    grep 'Authorized users only. All activities may be monitored and reported' log
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
-    LOG_INFO "Start cleanning environment."
-    userdel -rf testuser
-    rm -rf testlog testlog1
+    LOG_INFO "start environment cleanup."
+    rm -rf log
     LOG_INFO "Finish environment cleanup!"
 }
 
