@@ -28,3 +28,7 @@ oe_test_ssh_passwd_dosnot_clear
 oe_test_ssh_RSA_auth
 oe_test_ssh_sftp_across_updir
 oe_test_ssh_system_reinforcement
+oe_test_ssh_version2
+oe_test_ssh_warnings
+oe_test_use_security_tools
+oe_test_use_su_Initialize_path
