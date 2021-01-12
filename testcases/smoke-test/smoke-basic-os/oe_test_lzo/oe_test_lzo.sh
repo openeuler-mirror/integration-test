@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021 Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -12,28 +12,30 @@
 # #############################################
 # @Author    :   lutianxiong
 # @Contact   :   lutianxiong@huawei.com
-# @Date      :   2020-07-29
+# @Date      :   2021-01-10
 # @License   :   Mulan PSL v2
-# @Desc      :   hdparm test
+# @Desc      :   lzo test
 # ############################################
 
 set -eo pipefail
 source "$OET_PATH/libs/locallibs/common_lib.sh"
+origin_file="/etc/openEuler-release"
 
 function pre_test() {
-    dnf install -y hdparm util-linux
+    dnf install -y lzop
 }
 
 function run_test() {
-    disk=$(lsblk -S -o NAME,TYPE | grep -w disk | head -1 | awk '{print $1}')
-    if [ -z "${disk}" ];then
-        LOG_INFO "no available disk found, skip $0"
-        return 0
-    fi
+    lzop -o test.lzo $origin_file
+    diff test.lzo $origin_file && return 1
+    lzop -t test.lzo
+    lzop -l test.lzo
+    lzop -d test.lzo
+    diff test $origin_file
+}
 
-    hdparm -a /dev/${disk} | grep readahead
-    hdparm -r /dev/${disk} | grep readonly
-    hdparm -F /dev/${disk}
+function post_test() {
+    rm -rf test test.lzo
 }
 
 main $@
