@@ -30,14 +30,24 @@ function run_test() {
     LOG_INFO "Start to run test."
     useradd testuser
     mkdir /home/new_test -p
-    touch /home/new_test/testfile.txt
+    touch /home/testuser/testfile.txt
     grep testuser /etc/passwd | awk -F: '{print $6}' | grep "/home/testuser"
     CHECK_RESULT $?
     usermod -d /home/new_test testuser
     CHECK_RESULT $?
     grep testuser /etc/passwd | awk -F: '{print $6}' | grep "/home/new_test"
     CHECK_RESULT $?
+    find /home/new_test/testfile.txt
+    CHECK_RESULT $? 1
+    usermod -d /home/testuser testuser
+    CHECK_RESULT $?
+    grep testuser /etc/passwd | awk -F: '{print $6}' | grep "/home/testuser"
+    CHECK_RESULT $?
+    rm -rf /home/new_test
+    CHECK_RESULT $?
     usermod -d /home/new_test -m testuser
+    CHECK_RESULT $?
+    grep testuser /etc/passwd | awk -F: '{print $6}' | grep "/home/new_test"
     CHECK_RESULT $?
     test -f /home/new_test/testfile.txt
     CHECK_RESULT $?

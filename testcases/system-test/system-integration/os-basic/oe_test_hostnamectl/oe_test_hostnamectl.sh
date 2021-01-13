@@ -22,6 +22,7 @@ function run_test() {
     LOG_INFO "Start to run test."
     hostnamectl status
     CHECK_RESULT $?
+    localhost=$(hostnamectl status | sed -n 1p | cut -d ":" -f2)
     hostnamectl set-hostname my_host
     hostnamectl status | grep "my_host"
     CHECK_RESULT $?
@@ -33,6 +34,7 @@ function run_test() {
     CHECK_RESULT $? 1
     expect <<-EOF
     spawn hostnamectl set-hostname -H root@${NODE2_IPV4} new_host
+    logfile tstlog
     expect {
         "Are you sure you want to continue connecting*"
         {
@@ -47,7 +49,8 @@ function run_test() {
     }
     expect eof
 EOF
-    CHECK_RESULT $?
+    grep -iE "fail|errot" testlog
+    CHECK_RESULT $? 1
     SSH_CMD "hostnamectl status" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" | tail -n 10 | grep new_host
     CHECK_RESULT $?
     LOG_INFO "End to run test."
@@ -55,10 +58,9 @@ EOF
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    rm -rf hostname024.log
-    hostnamectl set-hostname localhost.localdomain
+    hostnamectl set-hostname ${localhost}
     expect <<-EOF
-    spawn hostnamectl set-hostname -H root@${NODE2_IPV4} localhost.localdomain
+    spawn hostnamectl set-hostname -H root@${NODE2_IPV4} ${localhost}
     expect {
         "Are you sure you want to continue connecting (yes/no)?"
         {

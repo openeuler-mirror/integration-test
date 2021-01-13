@@ -18,7 +18,7 @@
 # #############################################
 
 share_arg
-LOCAL_ETH=(${NODE1_NICS[@]}/$(ip route | grep ${NODE1_IPV4} | awk '{print$3}'))
+LOCAL_ETH=(${NODE1_NICS[@]/$(ip route | grep ${NODE1_IPV4} | awk '{print$3}')})
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function Randomly_generate_ip() {
