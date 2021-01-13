@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -31,7 +31,7 @@ function pre_isulad_env() {
 	    systemctl restart isulad
         isula pull ${Images_name}
     else
-        if [ ${FRAME} == aarch64 ];then
+        if [ $(uname -i) == aarch64 ];then
             isula load -i ../common/openEuler-docker.aarch64.tar.xz
         else
             isula load -i ../common/openEuler-docker.x86_64.tar.xz

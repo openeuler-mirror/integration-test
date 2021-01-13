@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -19,10 +19,6 @@
 # ############################################
 
 source ../common/prepare_isulad.sh
-function config_params() {
-    LOG_INFO "This test case has no config params to load!"
-}
-
 function pre_test() {
     LOG_INFO "Start environment preparation."
     pre_isulad_env
@@ -32,23 +28,25 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start executing testcase!"
     run_isulad_container
-
     expect -c "
     log_file testlog
     spawn isula attach ${containerId}
     sleep 1
     expect {
     \"\" {send \"\r\";
-    expect \"*\[#|/\]*\" {send \"exit\r\"}
+     expect \"*\[#|/\]*\" {send \"exit\r\"}
 }
 }
 expect eof
 "
     grep -iE 'error|fail' testlog
     CHECK_RESULT $? 1
-
-    cat testlog | grep "/" | grep "exit"
-    CHECK_RESULT $?
+    
+    if [ $Images_name == busybox ];then
+        CHECK_RESULT $(cat testlog | grep "exit" | wc -l) 1
+    else
+        CHECK_RESULT $(cat testlog | grep "exit" | wc -l) 2
+    fi
 
     container_name=$(isula ps -a | grep ${Images_name} | awk '{print$NF}')
     CHECK_RESULT $?
@@ -64,7 +62,7 @@ expect eof
 function post_test() {
     LOG_INFO "start environment cleanup."
     clean_isulad_env
-    DNF_REMOVE "iSulad tar"
+    DNF_REMOVE
     rm -rf testlog
     LOG_INFO "Finish environment cleanup."
 }

@@ -10,51 +10,47 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @CaseName  :   oe_test_docker_commit_export_import_001
+# @CaseName  :   oe_test_iSula_mkdir100_001
 # @Author    :   Classicriver_jia
 # @Contact   :   classicriver_jia@foxmail.com
-# @Date      :   2020-06-08
+# @Date      :   2020-06-09
 # @License   :   Mulan PSL v2
-# @Desc      :   Commit / export / import application of container
+# @Desc      :   Copy between container and host
 # ############################################
 
-source ../common/prepare_docker.sh
+source ../common/prepare_isulad.sh
 function pre_test() {
     LOG_INFO "Start environment preparation."
-    pre_docker_env
+    pre_isulad_env
     LOG_INFO "Environmental preparation is over."
 }
 
 function run_test() {
-    LOG_INFO "Start executing testcase."
-    run_docker_container
-    docker commit ${containers_id} ${Images_name}:test
+    LOG_INFO "Start executing testcase!"
+    run_isulad_container
+
+    isula exec -it ${containerId} /bin/sh -c "dir=/testdir;i=0;while [ \${i} -le 200 ]; do mkdir \${dir}; dir=\${dir}/testdir; let i=\${i}+1; done"
     CHECK_RESULT $?
 
-    docker images | grep ${Images_name} | grep -w test
+    isula cp ${containerId}:/testdir . 
     CHECK_RESULT $?
 
-    docker export ${containers_id} > ${Images_name}.tar
-    CHECK_RESULT $?
-    test -f ${Images_name}.tar
+    find testdir | grep testdir
     CHECK_RESULT $?
 
-    clean_docker_env
+    isula stop $(isula ps -aq)
+    CHECK_RESULT $?
 
-    docker images | grep ${Images_name}
-    CHECK_RESULT $? 1
-    docker import ${Images_name}.tar ${Images_name}:latest
+    isula rm $(isula ps -aq)
     CHECK_RESULT $?
-    docker images | grep ${Images_name} | grep latest
-    CHECK_RESULT $?
-    LOG_INFO "End of testcase execution."
+    LOG_INFO "End of testcase execution!"
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    docker rmi $(docker images -q)
+    rm -rf testdir
+    clean_isulad_env
     DNF_REMOVE
-    rm -rf ${Images_name}.tar
     LOG_INFO "Finish environment cleanup."
 }
 

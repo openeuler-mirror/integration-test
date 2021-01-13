@@ -24,10 +24,10 @@ Image_address="ariq8blp.mirror.aliyuncs.com"
 
 function pre_docker_env() {
     DNF_INSTALL docker
+    clean_docker_env
     ping ${Image_address} -c 3
     if [ $? -ne 0 ]; then
-        clean_docker_env
-        if [ ${FRAME} == aarch64 ]; then
+        if [ $(uname -i) == aarch64 ]; then
             docker load -i ../common/openEuler-docker.aarch64.tar.xz
         else
             docker load -i ../common/openEuler-docker.x86_64.tar.xz

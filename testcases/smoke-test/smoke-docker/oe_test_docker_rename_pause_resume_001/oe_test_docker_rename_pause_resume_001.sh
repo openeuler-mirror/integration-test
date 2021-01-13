@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -19,13 +19,6 @@
 # ############################################
 
 source ../common/prepare_docker.sh
-function config_params() {
-    LOG_INFO "Start loading data."
-    container_name=old_container
-    new_name=new_container
-    LOG_INFO "Loading data is complete."
-}
-
 function pre_test() {
     LOG_INFO "Start environment preparation."
     pre_docker_env
@@ -57,7 +50,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "start environment cleanup."
     clean_docker_env
-    DNF_REMOVE docker
+    DNF_REMOVE
     LOG_INFO "Finish environment cleanup."
 }
 

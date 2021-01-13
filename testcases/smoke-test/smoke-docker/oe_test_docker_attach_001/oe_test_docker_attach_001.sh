@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -19,10 +19,6 @@
 # ############################################
 
 source ../common/prepare_docker.sh
-function config_params() {
-    LOG_INFO "This test case has no config params to load!"
-}
-
 function pre_test() {
     LOG_INFO "Start environment preparation."
     pre_docker_env
@@ -32,7 +28,6 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start executing testcase."
     run_docker_container
-
     expect -c "
     log_file testlog
     spawn docker attach ${containers_id}
@@ -51,7 +46,7 @@ expect eof
 function post_test() {
     LOG_INFO "start environment cleanup."
     clean_docker_env
-    DNF_REMOVE docker
+    DNF_REMOVE
     rm -rf testlog
     LOG_INFO "Finish environment cleanup."
 }
