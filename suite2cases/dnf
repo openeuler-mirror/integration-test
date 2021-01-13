@@ -8,3 +8,13 @@ oe_test_dnf_cacheonly
 oe_test_dnf_check
 oe_test_dnf_check-update
 oe_test_dnf_clean
+oe_test_dnf_different-packages
+oe_test_dnf_distro-sync
+oe_test_dnf_dnf-3
+oe_test_dnf_downloaddir
+oe_test_dnf_downloadonly
+oe_test_dnf_enabled
+oe_test_dnf_enablerepo
+oe_test_dnf_enhancement
+oe_test_dnf_exclude
+oe_test_dnf_forcearch
