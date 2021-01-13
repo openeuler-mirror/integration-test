@@ -50,6 +50,7 @@ EOF
         exit [lindex \$result 3]
 EOF1
     grep '/home/test' log
+    CHECK_RESULT $?
     rm -rf log
     usermod -L -s /sbin/nologin test
     expect <<EOF1
@@ -79,8 +80,8 @@ EOF1
         catch wait result;
         exit [lindex \$result 3]
 EOF1
-    CHECK_RESULT $? 0 1
     grep 'Permission denied' log
+    CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
