@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020 Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021 Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -12,28 +12,21 @@
 # #############################################
 # @Author    :   lutianxiong
 # @Contact   :   lutianxiong@huawei.com
-# @Date      :   2020-07-29
+# @Date      :   2021-01-10
 # @License   :   Mulan PSL v2
-# @Desc      :   hdparm test
+# @Desc      :   skopeo test
 # ############################################
 
 set -eo pipefail
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function pre_test() {
-    dnf install -y hdparm util-linux
+    dnf install -y skopeo
 }
 
 function run_test() {
-    disk=$(lsblk -S -o NAME,TYPE | grep -w disk | head -1 | awk '{print $1}')
-    if [ -z "${disk}" ];then
-        LOG_INFO "no available disk found, skip $0"
-        return 0
-    fi
-
-    hdparm -a /dev/${disk} | grep readahead
-    hdparm -r /dev/${disk} | grep readonly
-    hdparm -F /dev/${disk}
+    skopeo list-tags --tls-verify=false docker://docker.io/nginx
+    skopeo inspect --tls-verify=false docker://docker.io/nginx
 }
 
 main $@

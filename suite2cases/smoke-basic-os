@@ -48,3 +48,6 @@ oe_test_openssl
 oe_test_numactl
 oe_test_perf
 oe_test_criu
+oe_test_lzo
+oe_test_skopeo
+oe_test_haproxy
