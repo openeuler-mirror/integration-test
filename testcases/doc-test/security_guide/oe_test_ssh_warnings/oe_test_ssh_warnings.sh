@@ -43,8 +43,6 @@ function run_test() {
             }
         }
         expect eof
-        catch wait result;
-        exit [lindex \\\$result 3]
 EOF1
     grep 'Authorized users only. All activities may be monitored and reported' log
     CHECK_RESULT $?
