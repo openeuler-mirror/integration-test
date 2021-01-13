@@ -21,11 +21,11 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function run_test() {
     LOG_INFO "Start to run test."
-    #不要安装文档
+    rpm -q tree && dnf remove tree
     dnf --nodocs -y install tree
     CHECK_RESULT $? 0 0
-    ls /usr/share/doc/tree
-    CHECK_RESULT $? 2 0
+    find /usr/share/doc/tree
+    CHECK_RESULT $? 1 0
     LOG_INFO "End of the test."
 }
 

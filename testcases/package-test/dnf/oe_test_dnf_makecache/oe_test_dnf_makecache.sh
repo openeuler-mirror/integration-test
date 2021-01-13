@@ -20,6 +20,7 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
+    dnf clean all
     dnf makecache
     CHECK_RESULT $? 0 0
     ls /var/cache/dnf/*.solv

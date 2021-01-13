@@ -21,9 +21,9 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf --help install | grep usage
+    dnf --help install | grep "usage: dnf install"
     CHECK_RESULT $? 0 0
-    dnf -h install | grep usage
+    dnf -h install | grep "usage: dnf install"
     CHECK_RESULT $? 0 0
     dnf --help-install | grep usage
     CHECK_RESULT $? 0 0
