@@ -13,28 +13,23 @@
 # @Author    :   zengcongwei
 # @Contact   :   735811396@qq.com
 # @Date      :   2020/5/12
-# @Desc      :   Test "dnf distro-sync" command
+# @Desc      :   Test "dnf makecache" command
 # ##################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    dnf install -y tree
-    LOG_INFO "Finish preparing the test environment."
-}
-
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf distro-sync -y tree
+    dnf clean all
+    dnf makecache
+    CHECK_RESULT $? 0 0
+    ls /var/cache/dnf/*.solv
     CHECK_RESULT $? 0 0
     LOG_INFO "End of the test."
 }
 
 function post_test() {
-    LOG_INFO "Start to restore the test environment."
-    dnf -y remove tree
-    LOG_INFO "Finish restoring the test environment."
+    LOG_INFO "Need't to restore the tet environment."
 }
 
 main "$@"

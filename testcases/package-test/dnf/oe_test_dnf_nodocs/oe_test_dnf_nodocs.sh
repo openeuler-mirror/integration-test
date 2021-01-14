@@ -12,29 +12,27 @@
 # ##################################
 # @Author    :   zengcongwei
 # @Contact   :   735811396@qq.com
-# @Date      :   2020/5/12
-# @Desc      :   Test "dnf distro-sync" command
+# @Date      :   2020/5/13
+# @License   :   Mulan PSL v2
+# @Desc      :   Test "--nodocs" option
 # ##################################
 
-source "$OET_PATH/libs/locallibs/common_lib.sh"
-
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    dnf install -y tree
-    LOG_INFO "Finish preparing the test environment."
-}
+source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf distro-sync -y tree
+    rpm -q tree && dnf remove tree
+    dnf --nodocs -y install tree
     CHECK_RESULT $? 0 0
+    find /usr/share/doc/tree
+    CHECK_RESULT $? 1 0
     LOG_INFO "End of the test."
 }
 
 function post_test() {
-    LOG_INFO "Start to restore the test environment."
+    LOG_INFO "Start restore the test environment."
     dnf -y remove tree
-    LOG_INFO "Finish restoring the test environment."
+    LOG_INFO "End of restore the test environment."
 }
 
 main "$@"

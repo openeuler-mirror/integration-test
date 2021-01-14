@@ -20,7 +20,7 @@ source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf check-update　
+    dnf check-update
     CHECK_RESULT $? 100 0
     dnf check-update | grep Obsoleting
     CHECK_RESULT $? 0 0

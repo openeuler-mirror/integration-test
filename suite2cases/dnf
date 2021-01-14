@@ -1,6 +1,6 @@
 oe_test_dnf_alias
 oe_test_dnf_all-repos
-oe_test_dnf_assumenu
+oe_test_dnf_assumeno
 oe_test_dnf_automatic
 oe_test_dnf_autoremvove
 oe_test_dnf_best
@@ -18,3 +18,13 @@ oe_test_dnf_enablerepo
 oe_test_dnf_enhancement
 oe_test_dnf_exclude
 oe_test_dnf_forcearch
+oe_test_dnf_gpgcheck
+oe_test_dnf_help
+oe_test_dnf_help-cmd
+oe_test_dnf_history
+oe_test_dnf_info
+oe_test_dnf_list
+oe_test_dnf_makecache
+oe_test_dnf_mark
+oe_test_dnf_nobest
+oe_test_dnf_nodocs

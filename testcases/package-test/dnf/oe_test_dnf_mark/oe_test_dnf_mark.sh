@@ -13,27 +13,30 @@
 # @Author    :   zengcongwei
 # @Contact   :   735811396@qq.com
 # @Date      :   2020/5/12
-# @Desc      :   Test "dnf distro-sync" command
+# @Desc      :   Test "dnf mark" command
 # ##################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    dnf install -y tree
-    LOG_INFO "Finish preparing the test environment."
-}
-
 function run_test() {
     LOG_INFO "Start to run test."
-    dnf distro-sync -y tree
+    dnf -y install vim
+    #将vim-common包标记为用户安装，而不是依赖性安装
+    dnf mark install vim-common
     CHECK_RESULT $? 0 0
+    dnf -y remove vim
+    #vim-common没有被删除
+    dnf list installed | grep vim-common
+    CHECK_RESULT $? 0 0
+    dnf mark remove vim-common
+    CHECK_RESULT $? 0 0
+
     LOG_INFO "End of the test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    dnf -y remove tree
+    dnf -y remove vim-common
     LOG_INFO "Finish restoring the test environment."
 }
 
