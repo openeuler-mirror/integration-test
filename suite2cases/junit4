@@ -8,3 +8,6 @@ oe_test_junit4_TestCase_api
 oe_test_junit4_TestSuite_api
 oe_test_junit4_TestResult_api
 oe_test_junit4_maven
+oe_test_junit4_ant
+oe_test_junit4_compare_different_performances
+oe_test_junit4_performances

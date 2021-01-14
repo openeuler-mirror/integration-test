@@ -8,34 +8,34 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
 public class ExceptionTest {
-    @Test(expected = ArithmeticException.class)
-    public void testDivisionWithException() {
-        int i = 1 / 0;
-    }
-
-    @Test(expected = IndexOutOfBoundsException.class)
-    public void testEmptyList() {
-        new ArrayList<>().get(0);
-    }
-
-    @Test
-    public void testDivisionWithException2() {
-        try {
-            int i = 1 / 0;
-            fail(); 
-        } catch (ArithmeticException e) {
-            assertThat(e.getMessage(),is("/ by zero"));
-        }
+	@Test(expected = ArithmeticException.class)
+	public void testDivisionWithException() {
+		int i = 1 / 0;
 	}
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+	@Test(expected = IndexOutOfBoundsException.class)
+	public void testEmptyList() {
+		new ArrayList<>().get(0);
+	}
 
-    @Test
-    public void testDivisionWithException3() {
-        thrown.expect(ArithmeticException.class);
-        thrown.expectMessage(containsString("/ by zero"));
-        int i = 1 / 0;
+	@Test
+	public void testDivisionWithException2() {
+		try {
+			int i = 1 / 0;
+			fail(); 
+		} catch (ArithmeticException e) {
+			assertThat(e.getMessage(),is("/ by zero"));
+		}
+	}
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	@Test
+	public void testDivisionWithException3() {
+		thrown.expect(ArithmeticException.class);
+		thrown.expectMessage(containsString("/ by zero"));
+		int i = 1 / 0;
 	}
 }
 

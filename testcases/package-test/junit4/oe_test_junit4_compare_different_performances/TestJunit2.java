@@ -3,7 +3,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.After;
 
-public class TestJunit2 extends TestCase  {
+	public class TestJunit2 extends TestCase  {
 	protected double fValue1;
 	protected double fValue2;
 

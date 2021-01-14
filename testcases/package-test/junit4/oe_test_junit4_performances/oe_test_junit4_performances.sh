@@ -14,6 +14,7 @@
 # @Contact   :   lchutian@163.com
 # @Date      :   2020/05/20
 # @License   :   Mulan PSL v2
+# @Desc      :   If it has specific performance standard for function and can be contained in the tests,also as a measure of whether the function is implemented or not,then @Test(timeout=xxx)can reach this goal.for example:it can tests the running time of calculating the fipolacci sequence function.
 # ############################################
 
 source "../common/common_junit.sh"
