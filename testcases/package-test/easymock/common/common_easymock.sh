@@ -1,4 +1,5 @@
 #!/usr/bin/bash
+
 # Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
@@ -7,12 +8,13 @@
 # EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
-####################################
-#@Author    	:   tangxiaolan
-#@Contact   	:   tangxiaolan0712@163.com
-#@Date      	:   2020/5/14
-#@License   	:   Mulan PSL v2
-#@Desc      	:   Public class integration
+
+# #############################################
+# @Author    :   tangxiaolan
+# @Contact   :   tangxiaolan0712@163.com
+# @Date      :   2020/5/14
+# @License   :   Mulan PSL v2
+# @Desc      :   Public class integration
 #####################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
@@ -24,7 +26,8 @@ function deploy_env() {
 
 function clear_env() {
     DNF_REMOVE "java* easymock junit"
-    rm -rf ./*.class
+    rmdoc=$(ls | grep -vE ".sh|.java|.xml|expect_result|main|test")
+    rm -rf ${rmdoc}
 }
 
 function compile_java() {
