@@ -20,6 +20,7 @@
 source ../common/net_lib.sh
 function config_params() {
     LOG_INFO "Start to config params of the case."
+    get_free_eth 1
     test_eth1=${LOCAL_ETH[0]}
     con_name='test_con1'
     LOG_INFO "End to config params of the case."

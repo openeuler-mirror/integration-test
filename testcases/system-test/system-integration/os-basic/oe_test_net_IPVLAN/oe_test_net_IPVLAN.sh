@@ -21,6 +21,7 @@ source ../common/net_lib.sh
 function config_params() {
     LOG_INFO "Start to config params of the case."
     link_name="my_ipvlan"
+    get_free_eth 1
     LOG_INFO "End to config params of the case."
 }
 
