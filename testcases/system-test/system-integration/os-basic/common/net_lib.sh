@@ -17,6 +17,7 @@
 # @Desc      :   Net Public function
 # #############################################
 
+<<<<<<< master
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function get_free_eth(){
@@ -25,6 +26,7 @@ function get_free_eth(){
     [ ${#LOCAL_ETH[@]} -ge ${num_eth} ] || exit 1
 }
 
+>>>>>>> master
 function Randomly_generate_ip() {
     while [ True ]; do
         random_ip=${NODE1_IPV4[0]%.*}.$(shuf -e $(seq 1 254) | head -n 1)

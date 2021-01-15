@@ -8,4 +8,5 @@ oe_test_easymock_simulate_interface
 oe_test_easymock_frequency_abnormal  
 oe_test_easymock_mock_abnormal  
 oe_test_easymock_parms_match     
-
+oe_test_easymock_simulate_object
+oe_test_easymock_spring

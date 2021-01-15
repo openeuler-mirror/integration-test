@@ -12,7 +12,7 @@ public class ParameterTest{
 	int input1=0;
 	int input2=0;
 
-	@Parameters        
+	@Parameters  
 	public static Collection<Object[]> t(){
 		return Arrays.asList(new Object [][]{
 			{4,2,2},
