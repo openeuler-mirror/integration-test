@@ -19,23 +19,23 @@
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
-Images_name="busybox"
-Image_address="ariq8blp.mirror.aliyuncs.com"
 
 function pre_docker_env() {
     DNF_INSTALL docker
-    ping ${Image_address} -c 3
-    if [ $? -ne 0 ]; then
-        clean_docker_env
-        if [ ${FRAME} == aarch64 ]; then
-            docker load -i ../common/openEuler-docker.aarch64.tar.xz
+    clean_docker_env
+    test -f ../common/openEuler-docker."$(uname -i)".tar.xz || {
+        if grep 20.09 /etc/os-release; then
+            os_version="openEuler-20.09"
+        elif grep LTS-SP1 /etc/os-release; then
+            os_version="openEuler-20.03-LTS-SP1"
         else
-            docker load -i ../common/openEuler-docker.x86_64.tar.xz
+            os_version="openEuler-20.03-LTS"
         fi
-        Images_name=$(docker images | grep latest | awk '{print$1}')
-    else
-        docker pull ${Images_name}
-    fi
+        wget -P ../common/ https://repo.openeuler.org/${os_version}/docker_img/"$(uname -i)"/openEuler-docker."$(uname -i)".tar.xz
+    }
+    docker load -i ../common/openEuler-docker."$(uname -i)".tar.xz
+    Images_name=$(docker images | grep latest | awk '{print$1}')
+    test -n "${Images_name}" || exit 1
 }
 
 function run_docker_container() {

@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-#copyright (c) [2020] Huawei Technologies Co.,Ltd.ALL rights reserved.
+#copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -18,10 +18,6 @@
 # ############################################
 
 source ../common/prepare_isulad.sh
-function config_params() {
-    LOG_INFO "This test case has no config params to load!"
-}
-
 function pre_test() {
     LOG_INFO "Start environment preparation."
     pre_isulad_env
@@ -57,7 +53,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "start environment cleanup."
     clean_isulad_env
-    DNF_REMOVE "iSulad tar"
+    DNF_REMOVE
     LOG_INFO "Finish environment cleanup."
 }
 
