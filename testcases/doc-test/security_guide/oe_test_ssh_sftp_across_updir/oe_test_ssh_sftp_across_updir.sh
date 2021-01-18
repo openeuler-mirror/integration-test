@@ -12,77 +12,95 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/5/29
+# @Date      :   2020/5/28
 # @License   :   Mulan PSL v2
-# @Desc      :   SSH checks the permissions and ownership of the user home directory before receiving the login request
+# @Desc      :   Restrict SFTP users to access up across directories
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    grep "^testuser:" /etc/passwd && userdel -rf testuser
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config-bak
+    grep "^sftpgroup:" /etc/group && groupdel sftpgroup
+    grep "^sftpuser:" /etc/passwd && userdel -rf sftpuser
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep "^StrictModes yes" /etc/ssh/sshd_config
+    groupadd sftpgroup
     CHECK_RESULT $?
-    useradd testuser
+    mkdir /sftp
+    chown root:root /sftp
+    chmod 755 /sftp
+    ls -l / | grep sftp | grep "root root" | grep 'drwxr-xr-x'
     CHECK_RESULT $?
-    passwd testuser <<EOF
+    useradd -g sftpgroup -s /sbin/nologin sftpuser
+    grep "^sftpuser" /etc/passwd | grep "/sbin/nologin"
+    CHECK_RESULT $?
+    passwd sftpuser <<EOF
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
-    chown root:root /home/testuser
-    ls -l /home | grep testuser | grep "root"
+    mkdir /sftp/sftpuser
+    chown root:root /sftp/sftpuser
+    chmod 755 /sftp/sftpuser
+    ls -l /sftp | grep sftpuser | grep "root root" | grep 'drwxr-xr-x'
     CHECK_RESULT $?
+    sed -i 's/Subsystem sftp \/usr\/libexec\/openssh\/sftp-server -l INFO -f AUTH/Subsystem sftp internal-sftp -l INFO -f AUTH/g' /etc/ssh/sshd_config
+    echo -e "Match Group sftpgroup\\n    ChrootDirectory /sftp/%u\\n    ForceCommand internal-sftp" >>/etc/ssh/sshd_config
+    systemctl restart sshd
     expect <<EOF
         set timeout 15
         log_file testlog
-        spawn ssh testuser@${NODE1_IPV4}
+        spawn ssh sftpuser@${NODE1_IPV4}
         expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "password:" {
+            "password" {
                 send "${NODE1_PASSWORD}\\r"
             }
         }
         expect eof
 EOF
-    grep "Could not chdir to home directory /home/testuser: Permission denied" testlog
-    CHECK_RESULT $?
-    chmod 200 /home/testuser
-    ls -l /home | grep testuser | grep 'd\-w\-\-\-\-\-\-\-\.'
+    grep "This service allows sftp connections only" testlog
     CHECK_RESULT $?
     expect <<EOF
         set timeout 15
-        log_file testlog1
-        spawn ssh testuser@${NODE1_IPV4}
+        log_file /home/sftpuser/testlog1
+        spawn sftp sftpuser@${NODE1_IPV4}
         expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "password:" {
+            "password" {
                 send "${NODE1_PASSWORD}\\r"
+            }
+        }
+        expect {
+            "sftp>" {
+                send "cd /sftp\\r"
             }
         }
         expect eof
 EOF
-    grep "Could not chdir to home directory /home/testuser: Permission denied" testlog1
+    grep "stat remote file: No such file or directory" /home/sftpuser/testlog1
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    userdel -rf testuser
-    rm -rf testlog testlog1
+    userdel -rf sftpuser
+    groupdel sftpgroup
+    rm -rf testlog /sftp
+    mv /etc/ssh/sshd_config-bak /etc/ssh/sshd_config
+    systemctl restart sshd
     LOG_INFO "Finish environment cleanup!"
 }
 

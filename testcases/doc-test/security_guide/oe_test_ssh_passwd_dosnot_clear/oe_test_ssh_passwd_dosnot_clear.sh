@@ -12,79 +12,57 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/05/28
+# @Date      :   2020/5/28
 # @License   :   Mulan PSL v2
-# @Desc      :   Shield system account
+# @Desc      :   Password does not echo in clear text when SSH executes command remotely
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    grep "^test:" /etc/passwd && userdel -rf test
-    ls log && rm -rf log
+    grep "^testuser:" /etc/passwd && userdel -rf testuser
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    useradd test
-    passwd test <<EOF
+    useradd testuser
+    grep "^testuser" /etc/passwd
+    CHECK_RESULT $?
+    passwd testuser <<EOF
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
-    expect <<EOF1
-        log_file log
-        spawn ssh test@127.0.0.1 pwd
-	    expect {
+    expect <<EOF
+    set timeout 15
+    log_file testlog
+    spawn ssh -t testuser@${NODE1_IPV4} su
+    expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "assword:" {
+            "password:" {
                 send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-	    expect eof
-EOF1
-    grep '/home/test' log
-    CHECK_RESULT $?
-    rm -rf log
-    usermod -L -s /sbin/nologin test
-    expect <<EOF1
-        log_file log
-        spawn ssh test@127.0.0.1 pwd
-	    expect {
-            "*yes/no*" {
-                send "yes\\r"
             }
         }
         expect {
-            "assword:" {
+            "password:" {
                 send "${NODE1_PASSWORD}\\r"
-	    	}
+            }
         }
-        expect {
-            "assword:" {
-                send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-        expect {
-            "assword:" {
-                send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-	    expect eof
-EOF1
-    grep 'Permission denied' log
-    CHECK_RESULT $?
+        expect eof
+EOF
+    grep "${NODE1_PASSWORD}" testlog
+    CHECK_RESULT $? 0 1
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
-    LOG_INFO "start environment cleanup."
-    userdel -rf test
-    rm -rf log
+    LOG_INFO "Start cleanning environment."
+    userdel -rf testuser
+    rm -rf testlog
     LOG_INFO "Finish environment cleanup!"
 }
 

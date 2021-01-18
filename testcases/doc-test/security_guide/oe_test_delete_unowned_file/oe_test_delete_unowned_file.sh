@@ -27,6 +27,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
+    test -z "$(find / -nouser 2>/dev/null)"
+    CHECK_RESULT $?
     useradd testuser
     grep "^testuser:" /etc/passwd
     CHECK_RESULT $?

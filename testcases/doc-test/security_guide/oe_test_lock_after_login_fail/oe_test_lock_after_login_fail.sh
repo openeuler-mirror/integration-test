@@ -63,8 +63,6 @@ EOF
 		}
 	}
 	expect eof
-	catch wait result;
-	exit [lindex \$result 3]
 EOF1
 	[ $(grep -c 'Permission denied' testlog) -eq 3 ]
 	CHECK_RESULT $?
@@ -99,8 +97,6 @@ EOF1
             }
         }
         expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
 	grep 'Permission denied' testlog
 	CHECK_RESULT $?
@@ -126,8 +122,6 @@ EOF1
 		}
 	}
 	expect eof
-	catch wait result;
-	exit [lindex \$result 3]
 EOF1
 	grep '\[test@localhost' testlog
 	CHECK_RESULT $?

@@ -12,79 +12,48 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/05/28
+# @Date      :   2020/5/28
 # @License   :   Mulan PSL v2
-# @Desc      :   Shield system account
+# @Desc      :   Test whether SSH protocol version is 2
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    grep "^test:" /etc/passwd && userdel -rf test
-    ls log && rm -rf log
+    ls testlog && rm -rf testlog
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    useradd test
-    passwd test <<EOF
-${NODE1_PASSWORD}
-${NODE1_PASSWORD}
-EOF
-    expect <<EOF1
-        log_file log
-        spawn ssh test@127.0.0.1 pwd
-	    expect {
-            "*yes/no*" {
-                send "yes\\r"
-            }
-        }
-        expect {
-            "assword:" {
-                send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-	    expect eof
-EOF1
-    grep '/home/test' log
+    grep "Protocol 2" /etc/ssh/sshd_config
     CHECK_RESULT $?
-    rm -rf log
-    usermod -L -s /sbin/nologin test
-    expect <<EOF1
-        log_file log
-        spawn ssh test@127.0.0.1 pwd
-	    expect {
+    ssh -1 ${NODE1_USER}@${NODE1_IPV4} 2>&1 | grep "SSH protocol v.1 is no longer supported"
+    CHECK_RESULT $?
+    expect <<EOF
+        set timeout 15
+        log_file testlog
+        spawn ssh -2 ${NODE1_USER}@${NODE1_IPV4}
+        expect {
             "*yes/no*" {
                 send "yes\\r"
             }
         }
         expect {
-            "assword:" {
+            "password" {
                 send "${NODE1_PASSWORD}\\r"
-	    	}
+            }
         }
-        expect {
-            "assword:" {
-                send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-        expect {
-            "assword:" {
-                send "${NODE1_PASSWORD}\\r"
-	    	}
-        }
-	    expect eof
-EOF1
-    grep 'Permission denied' log
+        expect eof
+EOF
+    grep "System information as of time" testlog
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
-    LOG_INFO "start environment cleanup."
-    userdel -rf test
-    rm -rf log
+    LOG_INFO "Start cleanning environment."
+    rm -rf testlog
     LOG_INFO "Finish environment cleanup!"
 }
 

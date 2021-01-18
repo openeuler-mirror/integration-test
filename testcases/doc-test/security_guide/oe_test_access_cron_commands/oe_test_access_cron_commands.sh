@@ -20,8 +20,6 @@
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    cp /etc/cron.allow /etc/cron.allow-bak
-    test -f /etc/cron.deny && cp /etc/cron.deny /etc/at.cron-bak
     grep "^testuser1:" /etc/passwd && userdel -rf testuser1
     grep "^testuser2:" /etc/passwd && userdel -rf testuser2
     LOG_INFO "End of environmental preparation!"
@@ -29,11 +27,8 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    rm -rf /etc/cron.deny
     ls -l /etc/cron.deny 2>&1 | grep "No such file or directory"
     CHECK_RESULT $?
-    chown root:root /etc/cron.allow
-    chmod og-rwx /etc/cron.allow
     ls -l /etc/cron.allow | grep "root root" | grep '\-rw\-\-\-\-\-\-\-\.'
     CHECK_RESULT $?
     useradd testuser1

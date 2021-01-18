@@ -12,18 +12,24 @@
 # #############################################
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/5/28
+# @Date      :   2020/6/4
 # @License   :   Mulan PSL v2
-# @Desc      :   Allow public key authentication
+# @Desc      :   Disable SSH agent forwarding
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
+function pre_test() {
+    LOG_INFO "Start environmental preparation."
+    cp /etc/ssh/ssh_config /etc/ssh/ssh_config-bak
+    LOG_INFO "End of environmental preparation!"
+}
+
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep "^PubkeyAuthentication yes" /etc/ssh/sshd_config
+    grep "^AllowAgentForwarding no" /etc/ssh/sshd_config
     CHECK_RESULT $?
     expect <<EOF
-		set timeout 15
+        set timeout 15
         spawn ssh-keygen
         expect {
             "save the key" {
@@ -36,9 +42,9 @@ function run_test() {
             }
         }
         expect {
-            "Enter same passphrase again" {
+                "Enter same passphrase again" {
                 send "\\r"
-            }
+                }
         }
         expect eof
 EOF
@@ -59,13 +65,39 @@ EOF
         }
         expect eof
 EOF
+    expect <<EOF
+        set timeout 15
+        spawn ssh-copy-id -i /root/.ssh/id_rsa.pub ${NODE3_USER}@${NODE3_IPV4}
+        expect {
+            "*yes/no*" {
+                send "yes\\r"
+            }
+        }
+        expect {
+            "password" {
+                send "${NODE3_PASSWORD}\\r"
+            }
+        }
+        expect eof
+EOF
     SSH_SCP ${NODE2_USER}@${NODE2_IPV4}:/root/.ssh/authorized_keys /home ${NODE2_PASSWORD}
     grep ssh-rsa /home/authorized_keys
     CHECK_RESULT $?
+    rm -rf /home/authorized_keys
+    SSH_SCP ${NODE3_USER}@${NODE3_IPV4}:/root/.ssh/authorized_keys /home ${NODE3_PASSWORD}
+    grep ssh-rsa /home/authorized_keys
+    CHECK_RESULT $?
+    eval $(ssh-agent)
+    ssh-add /root/.ssh/id_rsa
+    sed -i 's/#   ForwardAgent no/ForwardAgent yes/g' /etc/ssh/ssh_config
+    systemctl restart sshd
+    grep "^ForwardAgent yes" /etc/ssh/ssh_config
+    CHECK_RESULT $?
+    SSH_CMD "touch /home/test.txt" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     expect <<EOF
         set timeout 15
         log_file testlog
-        spawn ssh ${NODE2_USER}@${NODE2_IPV4}
+        spawn scp ${NODE2_USER}@${NODE2_IPV4}:/home/test.txt ${NODE3_USER}@${NODE3_IPV4}:/home
         expect {
             "*yes/no*" {
                 send "yes\\r"
@@ -73,14 +105,26 @@ EOF
         }
         expect eof
 EOF
-    grep "System information as of time" testlog
+    grep "password:" testlog
+    CHECK_RESULT $?
+    SSH_CMD "cp /etc/ssh/sshd_config /etc/ssh/sshd_config-bak
+    sed -i 's/AllowAgentForwarding no/AllowAgentForwarding yes/g' /etc/ssh/sshd_config
+    systemctl restart sshd" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    scp ${NODE2_USER}@${NODE2_IPV4}:/home/test.txt ${NODE3_USER}@${NODE3_IPV4}:/home
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
+    mv /etc/ssh/ssh_config-bak /etc/ssh/ssh_config -f
+    systemctl restart sshd
+    kill -9 "$(pgrep -f ssh-agent)"
     SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    SSH_CMD "rm -rf /home/test.txt" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    SSH_CMD "rm -rf /root/.ssh/authorized_keys
+    mv /etc/ssh/sshd_config-bak /etc/ssh/sshd_config -f
+    systemctl restart sshd" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     rm -rf /root/.ssh/id_rsa /root/.ssh/id_rsa.pub testlog /home/authorized_keys
     LOG_INFO "Finish environment cleanup!"
 }

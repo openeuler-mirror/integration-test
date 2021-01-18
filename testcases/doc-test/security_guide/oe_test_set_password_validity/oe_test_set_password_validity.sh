@@ -63,8 +63,6 @@ EOF
 				}
 		}
 		expect eof
-		catch wait result;
-		exit [lindex \$result 3]
 EOF1
 	grep 'your password will expire in 1 day' testlog
 	CHECK_RESULT $?
@@ -104,8 +102,6 @@ EOF1
 				}
 		}
 		expect eof
-		catch wait result;
-		exit [lindex \$result 3]
 EOF1
 	grep 'Current password' log && grep 'all authentication tokens updated successfully' log
 	CHECK_RESULT $?

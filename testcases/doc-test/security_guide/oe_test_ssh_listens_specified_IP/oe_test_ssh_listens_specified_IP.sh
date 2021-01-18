@@ -10,52 +10,45 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
+# @CaseName  :   test_ssh_FUN_014
 # @Author    :   huyahui
 # @Contact   :   huyahui8@163.com
-# @Date      :   2020/5/27
+# @Date      :   2020/6/4
 # @License   :   Mulan PSL v2
-# @Desc      :   Verify restrict access to at commands
+# @Desc      :   SSH service listens only for the specified IP address
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    grep "^testuser1:" /etc/passwd && userdel -rf testuser1
-    grep "^testuser2:" /etc/passwd && userdel -rf testuser2
+    DNF_INSTALL net-tools
+    selinux_state=$(getenforce)
+    if [ "$selinux_state" == "Enforcing" ]; then
+        SELINUX_LLAG=1
+        setenforce 0
+    fi
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config-bak
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    ls /etc/at.deny
-    CHECK_RESULT $? 0 1
-    ls -l /etc/at.allow | grep "root root" | grep '\-rw\-\-\-\-\-\-\-\.'
+    getenforce 2>&1 | grep "Permissive"
     CHECK_RESULT $?
-    useradd testuser1
-    grep "^testuser1:" /etc/passwd
+    sed -i 's/#ListenAddress 0.0.0.0/ListenAddress 127.0.0.1/g' /etc/ssh/sshd_config
+    systemctl restart sshd
     CHECK_RESULT $?
-    useradd testuser2
-    grep "^testuser2:" /etc/passwd
-    CHECK_RESULT $?
-    echo testuser1 >>/etc/at.allow
-    grep "^testuser1" /etc/at.allow
-    su - testuser1 -c "id 2>&1" | grep "testuser1"
-    CHECK_RESULT $?
-    su - testuser1 -c "at 2>&1" | grep "Garbled time"
-    CHECK_RESULT $?
-    su - testuser2 -c "id 2>&1" | grep "testuser2"
-    CHECK_RESULT $?
-    su - testuser2 -c "at 2>&1" | grep "You do not have permission to use at"
+    netstat -anp | grep sshd | tr -s " " | grep "tcp 0 0 127.0.0.1:22"
     CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    mv /etc/at.allow-bak /etc/at.allow -f
-    DNF_REMOVE at
-    userdel -rf testuser1
-    userdel -rf testuser2
+    mv /etc/ssh/sshd_config-bak /etc/ssh/sshd_config
+    systemctl restart sshd
+    DNF_REMOVE net-tools
+    [ ${SELINUX_LLAG} -eq 1 ] && setenforce 1
     LOG_INFO "Finish environment cleanup!"
 }
 
