@@ -46,8 +46,6 @@ EOF
 	    	}
         }
 	    expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
     grep '/home/test' log
     CHECK_RESULT $?
@@ -77,8 +75,6 @@ EOF1
 	    	}
         }
 	    expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
     grep 'Permission denied' log
     CHECK_RESULT $?

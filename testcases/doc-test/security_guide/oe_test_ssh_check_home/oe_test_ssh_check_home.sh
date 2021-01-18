@@ -81,8 +81,6 @@ EOF
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    chown testuser:testuser /home/testuser
-    chmod 700 /home/testuser
     userdel -rf testuser
     rm -rf testlog testlog1
     LOG_INFO "Finish environment cleanup!"

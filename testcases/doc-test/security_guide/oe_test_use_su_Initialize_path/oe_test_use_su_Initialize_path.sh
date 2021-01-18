@@ -59,8 +59,6 @@ EOF
             }
         }
         expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
     grep '/home/test/.local/bin:/home/test/bin' testlog
     CHECK_RESULT $?

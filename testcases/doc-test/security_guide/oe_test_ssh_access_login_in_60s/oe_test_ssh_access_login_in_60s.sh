@@ -50,8 +50,6 @@ function run_test() {
             }
         }
         expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
     grep 'Welcome to' testlog
     CHECK_RESULT $?
@@ -77,8 +75,6 @@ EOF1
             }
         }
         expect eof
-        catch wait result;
-        exit [lindex \$result 3]
 EOF1
     grep 'Connection closed by' testlog
     CHECK_RESULT $?

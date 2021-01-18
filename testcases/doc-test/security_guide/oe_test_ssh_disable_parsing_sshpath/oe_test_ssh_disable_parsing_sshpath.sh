@@ -71,7 +71,6 @@ EOF
 EOF
     expect <<EOF
         set timeout 15
-        log_file testlog
         spawn ssh ${NODE2_USER}@${NODE2_IPV4}
         expect {
             "*yes/no*" {
@@ -90,23 +89,13 @@ EOF
         }
         expect eof
 EOF
+    SSH_CMD "cat /root/.ssh/authorized_keys | grep 'environment=\"TESTENV1=testenv1\"'" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_SCP ${NODE2_USER}@${NODE2_IPV4}:/root/.ssh/authorized_keys /home ${NODE2_PASSWORD}
     grep "environment=\"TESTENV1=testenv1\"" /home/authorized_keys
     CHECK_RESULT $?
-    expect <<EOF
-        set timeout 15
-        log_file testlog1
-        spawn ssh ${NODE2_USER}@${NODE2_IPV4}
-        expect {
-            "*yes/no*" {
-                send "yes\\r"
-            }
-        }
-        expect eof
-EOF
-    grep "TESTENV=testenv" testlog1
+    SSH_CMD "echo $TESTENV | grep testenv" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     CHECK_RESULT $? 0 1
-    grep "TESTENV1=testenv1" testlog1
+    SSH_CMD "echo $TESTENV1 | grep testenv1" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     CHECK_RESULT $? 0 1
     LOG_INFO "Finish testcase execution."
 }
@@ -115,7 +104,7 @@ function post_test() {
     LOG_INFO "Start cleanning environment."
     SSH_CMD "rm -rf /root/.ssh/environment" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    rm -rf /root/.ssh/id_rsa /root/.ssh/id_rsa.pub testlog testlog1 /home/authorized_keys
+    rm -rf /root/.ssh/id_rsa /root/.ssh/id_rsa.pub
     LOG_INFO "Finish environment cleanup!"
 }
 
