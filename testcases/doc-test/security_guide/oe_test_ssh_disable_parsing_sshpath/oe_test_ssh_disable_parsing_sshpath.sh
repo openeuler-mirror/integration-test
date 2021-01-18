@@ -102,8 +102,7 @@ EOF
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    SSH_CMD "rm -rf /root/.ssh/environment" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    SSH_CMD "rm -rf /root/.ssh/environment /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     rm -rf /root/.ssh/id_rsa /root/.ssh/id_rsa.pub
     LOG_INFO "Finish environment cleanup!"
 }

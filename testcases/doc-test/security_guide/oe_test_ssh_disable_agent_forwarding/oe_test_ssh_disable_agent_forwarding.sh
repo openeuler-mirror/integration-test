@@ -26,7 +26,7 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep "^AllowAgentForwarding yes" /etc/ssh/sshd_config
+    grep "^AllowAgentForwarding no" /etc/ssh/sshd_config
     CHECK_RESULT $?
     expect <<EOF
         set timeout 15
@@ -75,7 +75,7 @@ EOF
         }
         expect {
             "password" {
-                send "${NODE2_PASSWORD}\\r"
+                send "${NODE3_PASSWORD}\\r"
             }
         }
         expect eof
@@ -87,6 +87,8 @@ EOF
     SSH_SCP ${NODE3_USER}@${NODE3_IPV4}:/root/.ssh/authorized_keys /home ${NODE3_PASSWORD}
     grep ssh-rsa /home/authorized_keys
     CHECK_RESULT $?
+    eval $(ssh-agent)
+    ssh-add /root/.ssh/id_rsa
     sed -i 's/#   ForwardAgent no/ForwardAgent yes/g' /etc/ssh/ssh_config
     systemctl restart sshd
     grep "^ForwardAgent yes" /etc/ssh/ssh_config
@@ -105,16 +107,24 @@ EOF
 EOF
     grep "password:" testlog
     CHECK_RESULT $?
+    SSH_CMD "cp /etc/ssh/sshd_config /etc/ssh/sshd_config-bak
+    sed -i 's/AllowAgentForwarding no/AllowAgentForwarding yes/g' /etc/ssh/sshd_config
+    systemctl restart sshd" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    scp ${NODE2_USER}@${NODE2_IPV4}:/home/test.txt ${NODE3_USER}@${NODE3_IPV4}:/home
+    CHECK_RESULT $?
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "Start cleanning environment."
-    mv /etc/ssh/ssh_config-bak /etc/ssh/ssh_config
+    mv /etc/ssh/ssh_config-bak /etc/ssh/ssh_config -f
     systemctl restart sshd
+    kill -9 "$(pgrep -f ssh-agent)"
     SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     SSH_CMD "rm -rf /home/test.txt" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "rm -rf /root/.ssh/authorized_keys" ${NODE3_IPV4} ${NODE3_PASSWORD} ${NODE3_USER}
+    SSH_CMD "rm -rf /root/.ssh/authorized_keys
+    mv /etc/ssh/sshd_config-bak /etc/ssh/sshd_config -f
+    systemctl restart sshd" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
     rm -rf /root/.ssh/id_rsa /root/.ssh/id_rsa.pub testlog /home/authorized_keys
     LOG_INFO "Finish environment cleanup!"
 }
