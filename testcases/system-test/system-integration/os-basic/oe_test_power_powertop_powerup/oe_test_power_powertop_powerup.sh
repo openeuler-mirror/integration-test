@@ -10,27 +10,36 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   doraemon2020
-# @Contact   :   xcl_job@163.com
-# @Date      :   2020-07-01
+# @Author    :   Classicriver_jia
+# @Contact   :   classicriver_jia@foxmail.com
+# @Date      :   2020-4-9
 # @License   :   Mulan PSL v2
-# @Desc      :   Net Public function
+# @Desc      :   Power up the POWERTOP
 # #############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
-
-function get_free_eth(){
-    local num_eth=$1
-    LOCAL_ETH=(${NODE1_NICS[@]/$(ip route | grep ${NODE1_IPV4} | awk '{print$3}')})
-    [ ${#LOCAL_ETH[@]} -ge ${num_eth} ] || exit 1
+function pre_test() {
+	LOG_INFO "Start to prepare the test environment."
+	DNF_INSTALL powertop
+	LOG_INFO "End to prepare the test environment."
 }
 
-function Randomly_generate_ip() {
-    while [ True ]; do
-        random_ip=${NODE1_IPV4[0]%.*}.$(shuf -e $(seq 1 254) | head -n 1)
-        ping -c 3 ${random_ip} &>/dev/nul || {
-            printf "%s" "$random_ip"
-            break
-        }
-    done
+function run_test() {
+	LOG_INFO "Start to run test."
+	nohup powertop >nohup.out 2>&1 &
+	nopid=$!
+	SLEEP_WAIT 2
+	kill -9 $nopid
+	grep "wakeups/second" <nohup.out
+	CHECK_RESULT $?
+	LOG_INFO "End to run test."
 }
+
+function post_test() {
+	LOG_INFO "Start to restore the test environment."
+	rm -rf nohup.out
+	DNF_REMOVE
+	LOG_INFO "End to restore the test environment."
+}
+
+main $@
