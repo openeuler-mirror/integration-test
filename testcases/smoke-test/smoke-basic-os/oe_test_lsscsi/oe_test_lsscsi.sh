@@ -25,8 +25,8 @@ function pre_test() {
 }
 
 function run_test() {
-    lsscsi 2> error.log
-    test -s error.log && return 1
+    lsscsi 2>error.log
+    test $(cat error.log | wc -l) -eq 0
 }
 
 function post_test() {

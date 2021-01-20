@@ -23,28 +23,29 @@ out_file="output.txt"
 last_num=20
 
 function pre_test() {
-    dnf install -y criu gcc
-    mkdir checkpoint_demo
+    SSH_CMD "dnf install -y criu gcc
+    mkdir /root/checkpoint_demo" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 }
 
 function run_test() {
-    gcc -o demo demo.c
+    SSH_SCP demo.c "${NODE2_USER}"@"${NODE2_IPV4}":/root/ "${NODE2_PASSWORD}"
+    SSH_CMD "gcc -o demo demo.c
     ./demo &
-    pid=$!
-
+    echo \$!>demo_pid
     sleep 1
-    criu dump -D `pwd`/checkpoint_demo -j -t $pid
-    ps aux | grep "demo" | grep -w $pid && return 1
-    let num1=`cat $out_file | tail -1`
+    criu dump -D /root/checkpoint_demo -j -t \$(cat demo_pid)" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 
-    criu restore -D `pwd`/checkpoint_demo -j
+    SSH_CMD "ps aux | grep demo | grep -w \$(cat demo_pid)" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" && return 1
+    let num1=$(SSH_CMD "cat $out_file | tail -1" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" | tail -n 1 | awk -F '\r' '{print $1}')
+
+    SSH_CMD "criu restore -D /root/checkpoint_demo -j" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
     let num2=num1+1
-    cat $out_file | grep -w $num2
-    cat $out_file | grep -w $last_num
+    SSH_CMD "cat $out_file | grep -w $last_num" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
+    SSH_CMD "cat $out_file | grep -w $num2" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 }
 
 function post_test() {
-    rm -rf checkpoint_demo demo $out_file
+    SSH_CMD "rm -rf checkpoint_demo demo demo.c $out_file" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
 }
 
 main $@

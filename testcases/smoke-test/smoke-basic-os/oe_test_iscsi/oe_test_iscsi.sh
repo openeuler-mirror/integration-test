@@ -44,7 +44,7 @@ function run_test() {
     echo -e "cd /iscsi/${iscsi_name}/tpg1/luns\n create /backstores/fileio/disk2 lun2\n" | targetcli
     systemctl restart target
 
-    echo "InitiatorName=${iscsi_name}:client" > /etc/iscsi/initiatorname.iscsi
+    echo "InitiatorName=${iscsi_name}:client" >/etc/iscsi/initiatorname.iscsi
     systemctl restart iscsid
     iscsiadm -m discovery -t st -p ${local_addr}
     iscsiadm -m node -p ${local_addr} -l
@@ -73,7 +73,7 @@ function post_test() {
     echo -e "cd /\n clearconfig confirm=true\n" | targetcli
     test -f initiatorname.iscsi && mv initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
     rm -rf $lun1 $lun2
-    test ${firewall_status} -eq 1 && systemctl restart firewalld 
+    test ${firewall_status} -eq 1 && systemctl restart firewalld
 }
 
 main $@

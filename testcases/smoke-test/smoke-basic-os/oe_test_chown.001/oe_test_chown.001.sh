@@ -31,7 +31,7 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start testing..."
     useradd test
-    echo $LOCAL_PASSWD | passwd test --stdin
+    echo $NODE1_PASSWORD | passwd test --stdin
 
     mkdir -p tmp/tmp01
 
