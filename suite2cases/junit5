@@ -1,0 +1,12 @@
+oe_test_junit5_abnormal_removejar
+oe_test_junit5_annotation_tag
+oe_test_junit5_annotation_timeout
+oe_test_junit5_ant
+oe_test_junit5_assert
+oe_test_junit5_epeat
+oe_test_junit5_gradle
+oe_test_junit5_junit4
+oe_test_junit5_kotlin_maven
+oe_test_junit5_maven
+oe_test_junit5_noimport
+oe_test_junit5_parametric
