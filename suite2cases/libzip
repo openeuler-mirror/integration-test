@@ -1,0 +1,3 @@
+oe_test_libzip_zipcmp
+oe_test_libzip_zipmerge
+oe_test_libzip_ziptool
