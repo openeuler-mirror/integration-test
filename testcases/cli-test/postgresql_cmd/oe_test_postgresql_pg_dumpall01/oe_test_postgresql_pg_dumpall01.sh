@@ -36,7 +36,7 @@ function run_test() {
     CHECK_RESULT $?
     su - postgres -c "pg_dumpall -g >/var/lib/pgsql/test.sql"
     CHECK_RESULT $?
-    grep -E "Roles|connect testdb" /var/lib/pgsql/test.sql
+    cat /var/lib/pgsql/test.sql | grep "Roles" | grep "connect testdb"
     CHECK_RESULT $? 1
     su - postgres -c "pg_dumpall -o > /var/lib/pgsql/test.sql"
     grep "OID" /var/lib/pgsql/test.sql
@@ -47,7 +47,7 @@ function run_test() {
     CHECK_RESULT $?
     su - postgres -c "pg_dumpall -r > /var/lib/pgsql/test.sql"
     CHECK_RESULT $?
-    grep -E "Roles|Tablespaces" /var/lib/pgsql/test.sql
+    cat /var/lib/pgsql/test.sql | grep "Roles" | grep "Tablespaces"
     CHECK_RESULT $? 1
     su - postgres -c "pg_dumpall -s >/var/lib/pgsql/test.sql"
     CHECK_RESULT $?
@@ -57,7 +57,7 @@ function run_test() {
     CHECK_RESULT $?
     su - postgres -c "pg_dumpall -t >/var/lib/pgsql/test.sql"
     CHECK_RESULT $?
-    grep -E "Tablespaces|Roles" /var/lib/pgsql/test.sql
+    cat /var/lib/pgsql/test.sql | grep "Roles" | grep "Tablespaces"
     CHECK_RESULT $? 1
     LOG_INFO "End to run test."
 }

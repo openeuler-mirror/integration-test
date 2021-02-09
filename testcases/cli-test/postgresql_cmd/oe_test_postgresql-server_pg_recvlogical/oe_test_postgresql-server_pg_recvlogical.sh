@@ -45,7 +45,7 @@ function run_test() {
     kill -9 $(pgrep -f 'slot test')
     su - postgres -c "pg_recvlogical -d postgres --drop-slot --slot test"
     CHECK_RESULT $?
-    su - postgres -c "pg_recvlogical -d postgres --slot test --create-slot "
+    su - postgres -c "pg_recvlogical -d postgres --slot test --create-slot"
     CHECK_RESULT $?
     su - postgres -c "pg_recvlogical -d postgres --slot test --start  -f - -I 0/A3FD7168 &"
     CHECK_RESULT $?

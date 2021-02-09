@@ -66,7 +66,7 @@ function run_test() {
     temp2=$(du /var/lib/pgsql/data/base/$oid | awk '{printf $1}')
     [ $temp1 -gt $temp2 ]
     CHECK_RESULT $?
-    su - postgres -c "vacuumdb -v" | grep "DETAIL"
+    su - postgres -c "vacuumdb -v" 2>&1 | grep "DETAIL"
     CHECK_RESULT $?
     vacuumdb -V | grep "(PostgreSQL)"
     CHECK_RESULT $?

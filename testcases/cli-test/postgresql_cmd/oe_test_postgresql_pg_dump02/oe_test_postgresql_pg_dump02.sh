@@ -54,7 +54,7 @@ function run_test() {
     CHECK_RESULT $?
     grep "myschema.test" /var/lib/pgsql/testfile
     CHECK_RESULT $? 1
-    su - postgres -c "pg_dump -v testdb -f tempv" | grep "pg_dump: creating"
+    su - postgres -c "pg_dump -v testdb -f tempv" 2>&1 | grep "pg_dump: creating"
     CHECK_RESULT $?
     pg_dump -V | grep "(PostgreSQL)"
     CHECK_RESULT $?
