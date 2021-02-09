@@ -104,7 +104,7 @@ function run_test() {
     CHECK_RESULT $?
     test "$(/usr/lib64/openmpi/bin/mpirun --allow-run-as-root -np 4 --report-bindings --map-by core --bind-to core ./testfile 2>&1 | grep -c "core")" -eq 4
     CHECK_RESULT $?
-    printf "rank 0=node1 slot=1\nrank 1=node2 slot=2" > ./myrankfile
+    printf "rank 0=node1 slot=1\nrank 1=node2 slot=1" > ./myrankfile
     /usr/lib64/openmpi/bin/mpirun --allow-run-as-root -H node1,node2 -rf myrankfile ./testfile 2>&1 > test.result
 #    test "$(/usr/lib64/openmpi/bin/mpirun --allow-run-as-root -H node1,node2 -rf myrankfile ./testfile 2>&1 | grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
