@@ -21,7 +21,7 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start executing testcase!"
     time=$(date "+%Y-%m-%d %H:%M:%S")
-    year=$(date "+%Y-%m-%d %H:%M:%S") | awk '{print$1}' | cut -d "-" -f1
+    year=${time}| awk '{print$1}' | cut -d "-" -f1
     date | grep ${year} | grep -i 'cst'
     CHECK_RESULT $?
     date01=$(date | awk -F ' ' '{print $1,$2,$3}')
