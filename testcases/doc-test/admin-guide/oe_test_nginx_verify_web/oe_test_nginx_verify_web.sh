@@ -28,8 +28,6 @@ function pre_test() {
 
 function run_test() {
 	LOG_INFO "Start executing testcase."
-	ifconfig | grep "docker0"
-	CHECK_RESULT $?
 	systemctl start nginx
 	firewall-cmd --add-port=80/tcp --permanent | grep success
 	CHECK_RESULT $?

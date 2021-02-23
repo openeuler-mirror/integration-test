@@ -10,7 +10,7 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @CaseName  :   oe_test_basic_Hwlock_setting
+# @CaseName  :   oe_test_basic_Hwclock_setting
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-27

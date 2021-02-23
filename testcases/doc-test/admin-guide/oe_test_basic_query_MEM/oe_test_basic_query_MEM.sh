@@ -48,23 +48,6 @@ function run_test() {
         lshw -c memory | grep bank -A 10 | grep -c "size" | grep 1
         CHECK_RESULT $?
     fi
-    #lshw -c memory
-    #CHECK_RESULT $?
-
-    #lshw -c memory | grep "bank" -A 5 | grep "description:"
-    #CHECK_RESULT $?
-
-    #lshw -c memory | grep "bank" -A 5 | grep "vendor"
-    #CHECK_RESULT $?
-
-    #lshw -c memory | grep "bank" -A 5 | grep "size"
-    #CHECK_RESULT $?
-
-    #lshw -c memory | grep -c "bank"
-    #CHECK_RESULT $?
-
-    #lshw -c memory | grep bank -A 10 | grep -c "size"
-    #CHECK_RESULT $?
     LOG_INFO "End of testcase execution!"
 }
 

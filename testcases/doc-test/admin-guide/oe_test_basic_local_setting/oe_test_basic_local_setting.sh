@@ -20,6 +20,7 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start executing testcase!"
+    local=$(localectl | head -1 | awk '{print$NF}')
     localectl list-locales | grep "UTF-8"
     CHECK_RESULT $?
     localectl status | grep -i 'system locale'
@@ -32,7 +33,7 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    localectl set-locale LANG=en_US.UTF-8
+    localectl set-locale ${local}
     LOG_INFO "Finish environment cleanup."
 }
 

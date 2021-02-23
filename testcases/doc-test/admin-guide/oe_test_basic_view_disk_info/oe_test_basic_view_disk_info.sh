@@ -20,7 +20,8 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start executing testcase!"
-    fdisk -l | grep "vda"
+    disk_name=$(lsblk | awk  '{print$1}' | sed -n 2p)
+    fdisk -l | grep ${disk_name}
     CHECK_RESULT $?
 
     fdisk -v | grep "fdisk"

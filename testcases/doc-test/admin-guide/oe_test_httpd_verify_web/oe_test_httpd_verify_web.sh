@@ -34,7 +34,7 @@ function run_test() {
 	CHECK_RESULT $?
 	firewall-cmd --reload | grep success
 	CHECK_RESULT $?
-	python -m http.server 8080 &
+	python3 -m http.server 8080 &
 	SSH_CMD "curl http://${NODE1_IPV4}" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
 	CHECK_RESULT $?
 	LOG_INFO "End of testcase execution."

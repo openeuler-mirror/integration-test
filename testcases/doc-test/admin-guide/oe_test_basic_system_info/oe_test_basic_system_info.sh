@@ -30,7 +30,7 @@ function run_test() {
     then 
         OS_VERSION_bak=${OS_VERSION}
     else
-        OS_VERSION_bak=${OS_VERSION} | awk -F '{print$1}'
+        OS_VERSION_bak=${OS_VERSION} | awk '{print$1}'
     fi
     grep -E "VERSION_ID" /etc/os-release | grep "$OS_VERSION_bak"
     CHECK_RESULT $?

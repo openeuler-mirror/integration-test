@@ -28,6 +28,7 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start executing testcase!"
+    localzone=$(timedatectl | sed -n '4p' | cut -d ":" -f 2 | awk '{print$1}')
     timedatectl | grep "Local time"
     CHECK_RESULT $?
     timedatectl set-ntp yes
@@ -55,11 +56,8 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    timedatectl set-timezone Asia/Shanghai
+    timedatectl set-timezone ${localzone}
     timedatectl set-ntp yes
-    SLEEP_WAIT 5
-    date -s "$time"
-    hwclock -w
     LOG_INFO "Finish environment cleanup."
 }
 

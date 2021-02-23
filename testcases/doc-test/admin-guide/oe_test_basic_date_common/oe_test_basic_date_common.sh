@@ -10,7 +10,7 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @CaseName  :   oe_test_basic_date_common_001
+# @CaseName  :   oe_test_basic_date_common
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
 # @Date      :   2020-04-09 10:52:41
@@ -21,7 +21,8 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start executing testcase!"
     time=$(date "+%Y-%m-%d %H:%M:%S")
-    date | grep '2020' | grep -i 'cst'
+    year=$(date "+%Y-%m-%d %H:%M:%S") | awk '{print$1}' | cut -d "-" -f1
+    date | grep ${year} | grep -i 'cst'
     CHECK_RESULT $?
     date01=$(date | awk -F ' ' '{print $1,$2,$3}')
     date -d 2020-01-01 | grep "Wed Jan  1 00:00:00 CST 2020"
@@ -37,6 +38,7 @@ function run_test() {
     timedatectl | grep -i "rtc time" | grep "2015-02-04"
     CHECK_RESULT $?
     date -s "$time"
+    CHECK_RESULT $?
     hwclock -w
     LOG_INFO "End of testcase execution!"
 }

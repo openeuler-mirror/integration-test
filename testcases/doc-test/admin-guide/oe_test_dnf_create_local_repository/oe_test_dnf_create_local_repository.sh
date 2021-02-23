@@ -19,32 +19,29 @@
 # #############################################
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
-	LOG_INFO "Start executing testcase."
+	LOG_INFO "Start environment preparation."
 	DNF_INSTALL createrepo
-	test -f /root/tmp || mkdir -p /root/tmp
-	LOG_INFO "End of testcase execution."
+	LOG_INFO "environment preparation is over."
 }
 
 function run_test() {
 	LOG_INFO "Start executing testcase."
-	mount /home/openEuler-20.03-LTS-SP1-aarch64-dvd.iso /home/iso
-	CHECK_RESULT $?
-	mkdir -p /srv/repo/
-	cp -r /home/iso/Packages /srv/repo/
-	CHECK_RESULT $?
+	mount /dev/cdrom /mnt
+    mkdir -p /srv/repo/
+    cp -r /mnt/Packages /srv/repo/
 	createrepo --database /srv/repo/
 	CHECK_RESULT $?
-	find /srv/repo/repodata > /dev/null
+	find /srv/repo/repodata
 	CHECK_RESULT $?
 	LOG_INFO "End of testcase execution."
 }
 
 function post_test() {
 	LOG_INFO "start environment cleanup."
-	umount /home/iso
+	umount /mnt
 	rm -rf /srv/repo/*
-	DNF_REMOVE
 	LOG_INFO "Finish environment cleanup."
 }
+
 
 main $@

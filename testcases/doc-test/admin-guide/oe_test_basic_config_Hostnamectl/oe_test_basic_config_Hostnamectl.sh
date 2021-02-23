@@ -18,21 +18,12 @@
 # @Desc      :   hostnamectl configuration hostname test
 # ############################################
 source ${OET_PATH}/libs/locallibs/common_lib.sh
-function pre_test() {
-    LOG_INFO "Start environment preparation."
-    current_path=$(
-        cd "$(dirname $0)" || exit 1
-        pwd
-    )
-    LOG_INFO "Environmental preparation is over."
-}
-
 function run_test() {
     LOG_INFO "Start executing testcase!"
     hostnamectl status
     CHECK_RESULT $?
     hostnamectl set-hostname my_host
-    hostnamectl status | grep "my_host"
+    hostnamectl status | grep "Pretty hostname: my_host"
     CHECK_RESULT $?
     hostnamectl set-hostname "Tester's notebook" --pretty
     hostnamectl status | grep "Pretty hostname" | grep "Tester's notebook"
