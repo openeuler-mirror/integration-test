@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -20,7 +20,7 @@ source ../common/lib.sh
 
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    mysql_init
+    postgresql_install
     su - postgres -c "pg_ctl stop -D data"
     su - postgres -c "rm -rf /var/lib/pgsql/data1 && mkdir -p /var/lib/pgsql/data1"
     LOG_INFO "End to prepare the test environment."
@@ -71,8 +71,9 @@ function run_test() {
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
+    systemctl stop postgresql
+    DNF_REMOVE
     rm -rf /var/lib/pgsql/*
-    DNF_REMOVE "postgresql postgresql-server postgresql-devel postgresql-contrib"
     LOG_INFO "End to restore the test environment."
 }
 main "$@"

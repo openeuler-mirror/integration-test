@@ -21,9 +21,10 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     cat >/opt/log_rotation_script <<EOF
-    #!/usr/bin/bash
-    mv -f /var/log/test  /var/log/test.1
+#!/usr/bin/bash
+mv -f /var/log/test  /var/log/test.1
 EOF
+    test -f /opt/log_rotation_script || exit 1
     LOG_INFO "End to prepare the test environment."
 }
 

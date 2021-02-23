@@ -43,7 +43,7 @@ EOF
     \$template test-template,"%timestamp:::date-rfc3339%  %HOSTNAME% %msgid% %msg%\n"
     local7.*  @@${NODE1_IPV4};test-template
 EOF
-    SSH_SCP client.conf ${NODE2_USER}@${NODE2_IPV4}:/etc/rsyslog.d/client.conf ${NODE2_PASSWORD}
+    SSH_SCP client.conf ${NODE2_USER}@${NODE2_IPV4}:/etc/rsyslog.d/client.conf "${NODE2_PASSWORD}"
     SSH_CMD "
     systemctl restart rsyslog
     logger -p local7.err "tcptesttemplate"

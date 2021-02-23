@@ -20,7 +20,7 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    echo "temp" >/etc/rsyslog.d/test
+    echo "temp" >/etc/rsyslog.d/test || exit 1
     LOG_INFO "End to prepare the test environment."
 }
 
