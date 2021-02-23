@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_basic_add_user
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Date      :   2021.04-09
 # @License   :   Mulan PSL v2
 # @Desc      :   Add User test
 # ############################################
@@ -25,7 +25,7 @@ function run_test() {
     if [ $? -ne 0 ]
     then  
         useradd ${user}  
-        useradd -e 2020-10-30 ${user}1
+        useradd -e 2021.10-30 ${user}1
     fi  
     passwd testuser <<EOF
 ${NODE1_PASSWORD}
@@ -35,7 +35,7 @@ EOF
     grep -E "^${user}|^${user}1" /etc/passwd
     CHECK_RESULT $?
 
-    chage -l ${user}1 | grep 2020 | grep 30
+    chage -l ${user}1 | grep 2021.| grep 30
     CHECK_RESULT $?
 
     chage -M 4 ${user}1

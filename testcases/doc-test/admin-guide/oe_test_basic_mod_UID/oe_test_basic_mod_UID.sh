@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -12,7 +12,7 @@
 # #############################################
 # @CaseName  :   oe_test_basic_mod_UID
 # @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Date      :   2021.04-09
 # @License   :   Mulan PSL v2
 # @Desc      :   Modify UID
 # ############################################

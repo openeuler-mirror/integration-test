@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_basic_date_common
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09 10:52:41
+# @Date      :   2021.04-09 10:52:41
 # @License   :   Mulan PSL v2
 # @Desc      :   Date command line test
 # ############################################
@@ -25,21 +25,22 @@ function run_test() {
     date | grep ${year} | grep -i 'cst'
     CHECK_RESULT $?
     date01=$(date | awk -F ' ' '{print $1,$2,$3}')
-    date -d 2020-01-01 | grep "Wed Jan  1 00:00:00 CST 2020"
+    date -d 2021.01-01 | grep "Wed Jan  1 00:00:00 CST 2021.
     date02=$(date | awk -F ' ' '{print $1,$2,$3}')
     [ "$date01" == "$date02" ]
     CHECK_RESULT $?
-    date -s "16:30:00" | grep -E "16:30:00|4:30:00"
+    date -s "10:30:00" | grep  "10:30:00"
     CHECK_RESULT $?
-    date -s "2015-02-04 16:30:00" | grep -E "16:30:00|4:30:00" | grep 2015 | grep -i feb | grep -i wed
+    date -s "2015-02-04 10:30:00" | grep  "10:30:00" | grep 2015 | grep -i feb | grep -i wed
     CHECK_RESULT $?
     hwclock -w
-
+    CHECK_RESULT $?
     timedatectl | grep -i "rtc time" | grep "2015-02-04"
     CHECK_RESULT $?
     date -s "$time"
     CHECK_RESULT $?
     hwclock -w
+    CHECK_RESULT $?
     LOG_INFO "End of testcase execution!"
 }
 
