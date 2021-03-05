@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -20,12 +20,7 @@ source ${OET_PATH}/libs/locallibs/common_lib.sh
 
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL "pcp pcp-zeroconf"
-    systemctl enable pmcd
-    systemctl start pmcd
-    systemctl enable pmlogger
-    systemctl start pmlogger
-    SLEEP_WAIT 10
+    DNF_INSTALL pcp-zeroconf
     LOG_INFO "End to prepare the test environment."
 }
 

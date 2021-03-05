@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -16,19 +16,19 @@
 #@Desc          :   mcelog is a tool used to check for hardware error on x86 Linux.
 #####################################
 
-source ${OET_PATH}/libs/locallibs/common_lib.sh
+if [ "${NODE1_FRAME}" != "x86_64" ]; then
+    echo "Non X86 architecture,this function is not supported"
+else
+    source ${OET_PATH}/libs/locallibs/common_lib.sh
 
-function pre_test() {
-    LOG_INFO "Start to prepare the test environment."
-    if [ "${NODE1_FRAME}" = "x86_64" ]; then
+    function pre_test() {
+        LOG_INFO "Start to prepare the test environment."
         DNF_INSTALL "mcelog gcc gcc-c++ flex dialog git"
-    fi
-    LOG_INFO "End to prepare the test environment."
-}
+        LOG_INFO "End to prepare the test environment."
+    }
 
-function run_test() {
-    LOG_INFO "Start to run test."
-    if [ "${NODE1_FRAME}" = "x86_64" ]; then
+    function run_test() {
+        LOG_INFO "Start to run test."
         cat >correct <<EOF
 CPU 1 BANK 2
 STATUS corrected
@@ -47,7 +47,7 @@ EOF
         CHECK_RESULT $?
         SLEEP_WAIT 3 "grep 'Hardware Error' /var/log/messages"
         CHECK_RESULT $?
-        
+
         mcelog --help 2>&1 | grep 'Usage'
         CHECK_RESULT $?
         mcelog --ignorenodev --daemon --syslog --logfile=/var/log/mcelog --pidfile haha.txt
@@ -62,19 +62,17 @@ EOF
         CHECK_RESULT $?
         mcelog --ascii --file /var/log/mcelog | grep 'Hardware event'
         CHECK_RESULT $?
-    fi
-    LOG_INFO "End to run test."
-}
+        LOG_INFO "End to run test."
+    }
 
-function post_test() {
-    LOG_INFO "Start to restore the test environment."
-    if [ "${NODE1_FRAME}" = "x86_64" ]; then
+    function post_test() {
+        LOG_INFO "Start to restore the test environment."
         kill -9 $(pgrep -f "mcelog --ignorenodev --daemon")
         echo "0" >/sys/devices/system/machinecheck/machinecheck0/tolerant
         rm -f correct /var/log/mcelog haha.txt
         DNF_REMOVE
-    fi
-    LOG_INFO "End to restore the test environment."
-}
+        LOG_INFO "End to restore the test environment."
+    }
 
-main "$@"
+    main "$@"
+fi
