@@ -98,7 +98,7 @@ function post_test() {
     LOG_INFO "Start cleanning environment."
     userdel -rf sftpuser
     groupdel sftpgroup
-    rm -rf testlog /sftp
+    rm -rf testlog /sftp /run/faillock/sftpuser
     mv /etc/ssh/sshd_config-bak /etc/ssh/sshd_config
     systemctl restart sshd
     LOG_INFO "Finish environment cleanup!"

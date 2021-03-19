@@ -68,7 +68,7 @@ EOF1
 function post_test() {
     LOG_INFO "start environment cleanup."
     userdel -rf test
-    rm -rf testlog /tmp/path.sh
+    rm -rf testlog /tmp/path.sh /run/faillock/test
     LOG_INFO "Finish environment cleanup!"
 }
 

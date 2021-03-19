@@ -91,6 +91,7 @@ function post_test() {
     userdel -rf testuser
     usermod -g example example
     userdel -rf example
+    rm -rf /run/faillock/example /run/faillock/testuser
     LOG_INFO "Finish environment cleanup!"
 }
 

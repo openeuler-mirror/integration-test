@@ -62,7 +62,7 @@ EOF
 function post_test() {
     LOG_INFO "Start cleanning environment."
     userdel -rf testuser
-    rm -rf testlog
+    rm -rf testlog /run/faillock/testuser
     LOG_INFO "Finish environment cleanup!"
 }
 

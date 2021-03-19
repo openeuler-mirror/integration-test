@@ -10,34 +10,49 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   huyahui
-# @Contact   :   huyahui8@163.com
-# @Date      :   2020/05/28
+# @Author    :   yanglijin
+# @Contact   :   yang_lijin@qq.com
+# @Date      :   2021/03/11
 # @License   :   Mulan PSL v2
-# @Desc      :   Set the user's default umask value to 077
+# @Desc      :   Set the user's default umask value to 022
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    SSH_CMD "cp /etc/bashrc /etc/bashrc-bak;rm -rf /home/test1 /home/log /home/test2;ls /etc/profile.d/ >/home/tmp;while read line;do cp /etc/profile.d/\${line} /etc/profile.d/\${line}-bak;done </home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    rm -rf test1 test2 
+    grep "^test:" /etc/passwd && userdel -rf test
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    SSH_CMD "echo 'umask 0077' >>/etc/bashrc" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "while read line;do echo 'umask 0077' >>/etc/profile.d/\${line};done </home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "mkdir /home/test1;ls -l /home | grep test1" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER} | tail -n 1 | grep 'drwx\-\-\-\-\-\-'
-    CHECK_RESULT $?
-    SSH_CMD "touch /home/test2;ls -l /home/test2" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER} | tail -n 1 | grep '\-rw\-\-\-\-\-\-\-'
-    CHECK_RESULT $?
+    grep -i "umask 022" /etc/bashrc
+    CHECK_RESULT $? 0 0 "umask error"
+    mkdir /home/test1
+    ls -l /home | grep "test1" | grep "drwxr\-xr\-x"
+    CHECK_RESULT $? 0 0 "dir permission verification failed"
+    touch /home/test2
+    ls -l /home/test2 | grep "\-rw\-r\-\-r\-\-"
+    CHECK_RESULT $? 0 0 "file permission verification failed"
     LOG_INFO "Finish testcase execution."
+    useradd test
+    passwd test <<EOF
+${NODE1_PASSWORD}
+${NODE1_PASSWORD}
+EOF
+   su - test -c "mkdir test3"
+   su - test -c "ls -l | grep "test3" | grep 'drwxr\-xr\-x'"
+   CHECK_RESULT $? 0 0 "dir permission verification failed"
+   su - test -c "touch test4"
+   su - test -c "ls -l test4 | grep '\-rw\-r\-\-r\-\-'"
+   CHECK_RESULT $? 0 0 "file permission verification failed"
+
 }
 function post_test() {
     LOG_INFO "start environment cleanup."
-    SSH_CMD "mv /etc/bashrc-bak /etc/bashrc;while read line;do mv /etc/profile.d/\${line}-bak /etc/profile.d/\${line};done </home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
-    SSH_CMD "rm -rf /home/log /home/log1 /home/test1 /home/test2 /home/tmp" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    userdel -rf test
+    rm -rf test1 test2
     LOG_INFO "Finish environment cleanup!"
 }
 
