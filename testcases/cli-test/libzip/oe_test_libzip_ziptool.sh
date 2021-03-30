@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -21,9 +21,8 @@ source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL libzip
-    mkdir testdir5
+    mkdir -p testdir5
     zip -r testdir5.zip testdir5/
-    cp -r testdir5.zip testdir_old.zip
     LOG_INFO "Finish preparing the test environment."
 }
 
@@ -35,13 +34,13 @@ function run_test() {
     CHECK_RESULT $?
     ziptool testdir5.zip add_dir test5
     CHECK_RESULT $?
-    zipcmp testdir_old.zip testdir5.zip | grep test5
+    unzip testdir5.zip -d tmp1 | grep test5
     CHECK_RESULT $?
     ziptool -e testdir5.zip add_dir test5
     CHECK_RESULT $? 1
     ziptool -c testdir5.zip delete 2
     CHECK_RESULT $?
-    zipcmp testdir_old.zip testdir5.zip | grep test5
+    unzip testdir5.zip -d tmp2 | grep test5
     CHECK_RESULT $? 1
     ziptool testdir5.zip get_archive_comment | grep "Archive comment:"
     CHECK_RESULT $?
@@ -51,7 +50,7 @@ function run_test() {
     CHECK_RESULT $?
     ziptool -n testdir5.zip rename 1 abc.txt
     CHECK_RESULT $?
-    zipcmp testdir_old.zip testdir5.zip | grep "abc.txt"
+    unzip testdir5.zip -d tmp3 | grep "abc.txt"
     CHECK_RESULT $?
     ziptool testdir5.zip stat 1
     CHECK_RESULT $?
@@ -69,8 +68,6 @@ function run_test() {
     CHECK_RESULT $?
     ziptool testdir5.zip stat 2 | grep "2015"
     CHECK_RESULT $?
-    ziptool testdir5.zip set_password 11111
-    CHECK_RESULT $?
     ziptool -h | grep -i "usage"
     CHECK_RESULT $?
     LOG_INFO "End of the test."
@@ -79,7 +76,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start to restore the test environment."
     DNF_REMOVE
-    rm -rf testdir* test*.zip
+    rm -rf ./testdir* ./test*.zip ./tmp*
     LOG_INFO "Finish restoring the test environment."
 }
 

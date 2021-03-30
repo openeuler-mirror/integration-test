@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -29,11 +29,12 @@ function run_test() {
     LOG_INFO "Start to run test."
     iscsistart -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(iscsistart -v | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == "$(rpm -qa open-iscsi | awk -F "-" '{print$3}')"
+    test "$(iscsistart -v | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == \
+    "$(rpm -qi open-iscsi | grep "Version" | awk '{print$3}')"
     CHECK_RESULT $?
     iscsiuio -h | grep "Usage"
     CHECK_RESULT $?
-    iscsiuio -v | grep -i "version"
+    iscsiuio -v | grep -oE "Version.*[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
     CHECK_RESULT $?
     iscsiuio -f -d 4  > ./iscsiuio_log.result 2>&1 & 
     systemctl restart iscsid

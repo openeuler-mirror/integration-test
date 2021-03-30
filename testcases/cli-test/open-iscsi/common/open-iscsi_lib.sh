@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -37,7 +37,7 @@ function TARGET_CONF() {
     sed -i "s/InitiatorName=.*$/InitiatorName=iqn.2020-08.com.example:client/g" /etc/iscsi/initiatorname.iscsi
     systemctl restart iscsid
     SLEEP_WAIT 2
-    systemctl status iscsid
+    systemctl status iscsid | grep -i "running" || exit 1
     cp -r /etc/iscsi/ifaces/iface.example /etc/iscsi/ifaces/iface."${NODE1_NICS}"
     echo "iface.transport_name = tcp
 iface.initiatorname = iqn.2020-08.com.example:client

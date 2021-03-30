@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -21,47 +21,58 @@ source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL "openmpi openmpi-devel"
+    mpi_path=$(whereis openmpi | awk '{print$2}')
+    {
+        echo "PATH=$PATH:${mpi_path}/bin"
+        echo "LD_LIBRARY_PATH=${mpi_path}/lib"
+    } >> $HOME/.bash_profile
+    source $HOME/.bash_profile
     LOG_INFO "Finish preparing the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    test "$(/usr/lib64/openmpi/bin/mpiexec --version | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(mpiexec --version | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/mpiexec --allow-run-as-root -h | grep "Usage"
+    mpiexec --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/mpicc hello.c -o hello
+    mpicc hello.c -o hello
     test -f hello
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/mpiexec --allow-run-as-root -np 4 ./hello
+    mpiexec --allow-run-as-root -np 4 ./hello 2>&1 | grep "Hello"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/mpirun --version | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(mpirun --version | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/mpirun --allow-run-as-root -h | grep "Usage"
+    mpirun --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/mpirun --allow-run-as-root -np 4 ./hello
+    mpirun --allow-run-as-root -np 4 ./hello 2>&1 | grep "Hello"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-clean -h | grep "ompi-clean \[OPTIONS\]"
+    ompi-clean -h | grep "ompi-clean \[OPTIONS\]"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-dvm --allow-run-as-root -h | grep "Usage"
+    ompi-dvm --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-dvm --allow-run-as-root -V | grep -E "ompi-dvm.*[0-9].[0-9].[0-9]"
+    ompi-dvm --allow-run-as-root -V | grep -E "ompi-dvm.*[0-9].[0-9].[0-9]"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-ps -h | grep "ompi-ps \[OPTIONS\]"
+    ompi-ps -h | grep "ompi-ps \[OPTIONS\]"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-server -h | grep "Usage"
+    ompi-server -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-submit --allow-run-as-root -h | grep "Usage"
+    ompi-submit --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/ompi-submit --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(ompi-submit --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi-top -h | grep "Usage"
+    ompi-top -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi_info -h | grep "Syntax"
+    ompi_info -h | grep "Syntax"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/ompi_info -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(ompi_info -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == \
+    "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/ompi_info
+    test "$(ompi_info 2>&1 | grep "Open MPI:" | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
     LOG_INFO "End of the test."
 }
@@ -70,6 +81,8 @@ function post_test() {
     LOG_INFO "Start to restore the test environment."
     DNF_REMOVE
     rm -rf ./hello
+    sed -i "/openmpi/d" $HOME/.bash_profile
+    source $HOME/.bash_profile 
     LOG_INFO "Finish restoring the test environment."
 }
 
