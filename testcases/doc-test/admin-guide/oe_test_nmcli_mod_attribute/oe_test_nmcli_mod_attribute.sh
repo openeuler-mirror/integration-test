@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   test_net_nmcli_FUN_020
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2021.05-08
+# @Date      :   2020.05-08
 # @License   :   Mulan PSL v2
 # @Desc      :   Nmcli modify attributes test
 # ############################################

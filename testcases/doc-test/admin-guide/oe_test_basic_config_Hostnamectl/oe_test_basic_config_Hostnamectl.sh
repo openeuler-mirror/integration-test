@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_basic_config_Hostnamectl
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2021.04-27
+# @Date      :   2020.04-27
 # @License   :   Mulan PSL v2
 # @Desc      :   hostnamectl configuration hostname test
 # ############################################

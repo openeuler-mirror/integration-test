@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_basic_system_info
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2021.04-28
+# @Date      :   2020.04-28
 # @License   :   Mulan PSL v2
 # @Desc      :   View system information
 # ############################################
@@ -26,12 +26,8 @@ function run_test() {
     CHECK_RESULT $?
     grep -E "^ID" /etc/os-release | grep "openEuler"
     CHECK_RESULT $?
-    if [$OS_VERSION -eq "20.09"]
-    then 
-        OS_VERSION_bak=${OS_VERSION}
-    else
-        OS_VERSION_bak=${OS_VERSION} | awk '{print$1}'
-    fi
+    OS_VERSION_bak=${OS_VERSION} | awk '{print$1}'
+    CHECK_RESULT $?
     grep -E "VERSION_ID" /etc/os-release | grep "$OS_VERSION_bak"
     CHECK_RESULT $?
     grep -E "PRETTY_NAME" /etc/os-release | grep "openEuler $OS_VERSION"

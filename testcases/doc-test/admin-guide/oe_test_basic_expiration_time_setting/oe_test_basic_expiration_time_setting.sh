@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_basic_expiration_time_setting
 # @Author    :   xuchunlin
 # @Contact   :   xcl_job@163.com
-# @Date      :   2021.04-09
+# @Date      :   2020.04-09
 # @License   :   Mulan PSL v2
 # @Desc      :   Set account and password expiration time test
 # ############################################
@@ -40,8 +40,8 @@ function run_test() {
     grep ${user_group} /etc/passwd
     CHECK_RESULT $?
     chage -l ${user_group}
-    chage -E 2021.03-01 ${user_group}
-    chage -l ${user_group} | grep 2021.| grep Mar | grep 01
+    chage -E 2020-03-01 ${user_group}
+    chage -l ${user_group} | grep 2020 | grep Mar | grep 01
     CHECK_RESULT $?
     chage -M 4 ${user_group}
     chage -l ${user_group} | grep Maximum | grep 4

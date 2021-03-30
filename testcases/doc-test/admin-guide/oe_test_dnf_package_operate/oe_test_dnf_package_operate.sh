@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -13,7 +13,7 @@
 # @CaseName  :   oe_test_dnf_package_operate
 # @Author    :   Classicriver_jia
 # @Contact   :   classicriver_jia@foxmail.com
-# @Date      :   2021.4-9
+# @Date      :   2020.4-9
 # @License   :   Mulan PSL v2
 # @Desc      :   Package operations
 # #############################################
@@ -30,7 +30,7 @@ function run_test() {
 	dnf search httpd | grep httpd
 	CHECK_RESULT $?
 
-	dnf list all > dev/null
+	dnf list all > /dev/null
 	CHECK_RESULT $?
 
 	dnf info httpd | grep httpd | grep -i Name
