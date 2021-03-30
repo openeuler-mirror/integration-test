@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -21,7 +21,7 @@ source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL libzip
-    mkdir testdir1 testdir2
+    mkdir -p testdir1 testdir2
     echo "hello" >testdir1/testfile1
     echo "hello" >testdir1/testA
     echo "hello" >testdir2/testfile2
@@ -44,15 +44,19 @@ function run_test() {
     CHECK_RESULT $?
     zipmerge -D testdir1.zip testdir3.zip && unzip testdir1.zip -d tmp1 | grep testdir2
     CHECK_RESULT $?
-    zipmerge -I testdir1.zip testdir5.zip && unzip testdir1.zip -d tmp2 && grep "world" tmp2/testdir2/testfile2
+    zipmerge -I testdir1.zip testdir5.zip && unzip testdir1.zip -d tmp2 && \
+        grep "world" tmp2/testdir2/testfile2
     CHECK_RESULT $?
     grep "hello" tmp2/testdir2/testfile2
     CHECK_RESULT $? 0 1
-    echo -e "y\\ny\\ny\\n" | zipmerge -i testdir6.zip testdir3.zip && unzip testdir1.zip -d tmp3 | grep testdir2
+    echo -e "y\\ny\\ny\\n" | zipmerge -i testdir6.zip testdir3.zip && \
+        unzip testdir1.zip -d tmp3 | grep testdir2
     CHECK_RESULT $?
-    zipmerge -S testdir7.zip testdir4.zip && unzip testdir7.zip -d tmp4 && grep "world" tmp4/testdir2/testfile2
+    zipmerge -S testdir7.zip testdir4.zip && unzip testdir7.zip -d tmp4 && \
+        grep "world" tmp4/testdir2/testfile2
     CHECK_RESULT $?
-    echo -e "y\r" | zipmerge -i -s testdir8.zip testdir4.zip && unzip testdir8.zip -d tmp5 && grep "world" tmp5/testdir2/testfile2
+    echo -e "y\r" | zipmerge -i -s testdir8.zip testdir4.zip && \
+        unzip testdir8.zip -d tmp5 && grep "world" tmp5/testdir2/testfile2
     CHECK_RESULT $?
     zipmerge -h | grep -i "usage"
     CHECK_RESULT $?
@@ -64,7 +68,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start to restore the test environment."
     DNF_REMOVE
-    rm -rf testdir* test*.zip tmp*
+    rm -rf ./testdir* ./test*.zip ./tmp*
     LOG_INFO "Finish restoring the test environment."
 }
 

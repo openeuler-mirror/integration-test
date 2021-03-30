@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -43,7 +43,7 @@ function run_test() {
     CHECK_RESULT $?
     ospam -C catalogs|grep 'Hello'
     CHECK_RESULT $?
-    mkdir testdir
+    rm -rf testdir && mkdir testdir
     cp -rf normal.sgml ./testdir/
     ospam -D ./testdir/ normal.sgml|grep 'Hello'
     CHECK_RESULT $?

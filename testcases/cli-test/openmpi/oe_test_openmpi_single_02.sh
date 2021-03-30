@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -21,47 +21,58 @@ source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL "openmpi openmpi-devel"
+    mpi_path=$(whereis openmpi | awk '{print$2}')
+    {
+        echo "PATH=$PATH:${mpi_path}/bin"
+        echo "LD_LIBRARY_PATH=${mpi_path}/lib"
+    } >> $HOME/.bash_profile
+    source $HOME/.bash_profile
     LOG_INFO "Finish preparing the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    /usr/lib64/openmpi/bin/orte-clean -h | grep "ompi-clean \[OPTIONS\]"
+    orte-clean -h | grep "ompi-clean \[OPTIONS\]"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-dvm --allow-run-as-root -h | grep "Usage"
+    orte-dvm --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/orte-dvm --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(orte-dvm --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-top -h | grep "Usage"
+    orte-top -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-ps -h | grep "ompi-ps \[OPTIONS\]"
+    orte-ps -h | grep "ompi-ps \[OPTIONS\]"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-server -h | grep "Usage"
+    orte-server -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-submit --allow-run-as-root -h | grep "Usage"
+    orte-submit --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/orte-submit --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(orte-submit --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orte-top -h | grep "Usage"
+    orte-top -h | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orted -h 2>&1 | grep "Usage"
+    orted -h 2>&1 | grep "Usage"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/orterun --allow-run-as-root -h | grep "Usage"
+    orterun --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/orterun --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(orterun --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/oshmem_info -h | grep "Syntax"
+    oshmem_info -h | grep "Syntax"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/oshmem_info -V | grep -i -E "open MPI\/SHMEM.*[0-9].[0-9].[0-9]"
-    test "$(/usr/lib64/openmpi/bin/oshmem_info -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(oshmem_info -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/oshrun --allow-run-as-root -h | grep "Usage"
+    oshrun --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/oshrun --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(oshrun --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
-    /usr/lib64/openmpi/bin/shmemrun --allow-run-as-root -h | grep "Usage"
+    shmemrun --allow-run-as-root -h | grep "Usage"
     CHECK_RESULT $?
-    test "$(/usr/lib64/openmpi/bin/shmemrun --allow-run-as-root -V | grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
+    test "$(shmemrun --allow-run-as-root -V | \
+        grep -Eo "[0-9]\.[0-9]\.[0-9]")" == "$(rpm -qa openmpi | awk -F "-" '{print$2}')"
     CHECK_RESULT $?
     LOG_INFO "End of the test."
 }
@@ -70,6 +81,8 @@ function post_test() {
     LOG_INFO "Start to restore the test environment."
     DNF_REMOVE
     rm -rf ./hello
+    sed -i "/openmpi/d" $HOME/.bash_profile
+    source $HOME/.bash_profile
     LOG_INFO "Finish restoring the test environment."
 }
 

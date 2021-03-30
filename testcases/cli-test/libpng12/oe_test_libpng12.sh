@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -42,7 +42,7 @@ function run_test() {
     CHECK_RESULT $?
     libpng12-config --help | grep 'Usage'
     CHECK_RESULT $?
-    test "$(libpng12-config --version)" == "$(rpm -qa libpng12 | awk -F "-" '{print$2}')"
+    test "$(libpng12-config --version)" == "$(rpm -qi libpng12 | grep 'Version' | awk '{print$3}')"
     CHECK_RESULT $?
     LOG_INFO "End of the test."
 }

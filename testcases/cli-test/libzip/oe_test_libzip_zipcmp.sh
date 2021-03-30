@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -21,7 +21,7 @@ source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL libzip
-    mkdir testdir1 testdir2
+    mkdir -p testdir1 testdir2
     echo "hello" >testdir1/testfile1
     echo "hello" >testdir1/testA
     echo "hello" >testdir2/testfile2
@@ -65,7 +65,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start to restore the test environment."
     DNF_REMOVE
-    rm -rf testdir* test*.zip
+    rm -rf ./testdir* ./test*.zip
     LOG_INFO "Finish restoring the test environment."
 }
 

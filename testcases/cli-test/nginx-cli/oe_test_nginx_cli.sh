@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -33,9 +33,17 @@ function run_test() {
     CHECK_RESULT 0
     nginx -h 2>&1 | grep -i "usage"
     CHECK_RESULT 0
-    test "$(nginx -v 2>&1 | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == "$(rpm -qa nginx | awk -F "-" '{print$2}')"
+    test "$(nginx -v 2>&1 | grep -Eo '[0-9]*\.[0-9]*\.[0-9]*')" == \
+        "$(rpm -qi nginx | grep 'Version' | awk '{print$3}')"
     CHECK_RESULT 0
-    test "$(nginx -V 2>&1 | grep "version" | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == "$(rpm -qa nginx | awk -F "-" '{print$2}')"
+    test "$(nginx -V 2>&1 | grep "version" | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == \
+        "$(rpm -qi nginx | grep 'Version' | awk '{print$3}')"
+    CHECK_RESULT 0
+    test "$(nginx -V 2>&1 | grep 'GCC' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-z]*')" == \
+        "$(rpm -qi gcc | grep 'Version' | awk '{print$3}')"
+    CHECK_RESULT 0
+    test "$(nginx -V 2>&1 | grep 'OpenSSL' | grep -oE '[0-9]+\.[0-9]+\.[0-9]+[a-z]*')" == \
+        "$(rpm -qi openssl | grep 'Version' | awk '{print$3}')"
     CHECK_RESULT 0
     nginx -t | grep "ok"
     CHECK_RESULT 0
@@ -43,7 +51,8 @@ function run_test() {
     CHECK_RESULT 0
     nginx -t -q
     CHECK_RESULT 0
-    pgrep nginx
+    echo "hello world1" > /usr/share/nginx/html/index.html
+    curl localhost 2>&1 | grep "hello"
     CHECK_RESULT 0
     nginx -s stop
     CHECK_RESULT 0
@@ -76,7 +85,8 @@ function run_test() {
     SLEEP_WAIT 1
     nginx -c /root/nginx.conf
     CHECK_RESULT 0
-    pgrep nginx
+    echo "hello world2" > /usr/share/nginx/html/index.html
+    curl localhost:81 2>&1 | grep "hello"
     CHECK_RESULT 0
     nginx -p /root/
     test $(ps -aux | grep nginx | grep -c master) -eq 2

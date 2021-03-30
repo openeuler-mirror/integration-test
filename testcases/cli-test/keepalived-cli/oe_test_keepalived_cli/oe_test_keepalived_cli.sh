@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 
-# Copyright (c) 2020. Huawei Technologies Co.,Ltd.ALL rights reserved.
+# Copyright (c) 2021. Huawei Technologies Co.,Ltd.ALL rights reserved.
 # This program is licensed under Mulan PSL v2.
 # You can use it according to the terms and conditions of the Mulan PSL v2.
 #          http://license.coscl.org.cn/MulanPSL2
@@ -90,23 +90,42 @@ function run_test() {
     SLEEP_WAIT 5
     test -s /var/log/keepalived.log
     CHECK_RESULT $?
-    kill -9 $(pgrep -f "keepalived -D -f /tmp/keepalived/keepalived.conf")
+    kill -9 $(pgrep -f "keepalived -D")
+    SLEEP_WAIT 2
+    echo "master agentx" >> /etc/snmp/snmpd.conf
+    systemctl restart snmpd
     keepalived -D -x
+    SLEEP_WAIT 2
+    grep -oE "NET-SNMP version .* AgentX subagent connected" /var/log/messages
     CHECK_RESULT $?
+    md5_value=$(SSH_CMD "
+    dnf install nginx -y;
+    systemctl start nginx;
+    genhash -s ${NODE2_IPV4} -p 80 -u /index.html;
+    " "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"| grep "MD5SUM" | awk '{print$3}' | tr -d "\r")
+    test "${md5_value}" = "$(genhash -s ${NODE2_IPV4} -p 80 -u /index.html | awk '{print$3}')"
+    CHECK_RESULT $?
+    genhash -h 2>&1 | grep -i "Usage"
+    CHECK_RESULT $?
+    test "$(genhash -r 2>&1 | grep -oE "[0-9]+\.[0-9]+\.[0-9]+")" == "$(rpm -qi keepalived | grep 'Version' | awk '{print$3}')"
+    CHECK_RESULT $?   
     LOG_INFO "Finish testcase execution."
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
+    systemctl stop snmpd
+    sed -i "/master agentx/d" /etc/snmp/snmpd.conf
     kill -9 $(pgrep -f "keepalived -D")
     sed -i "/keepalived.log/d" >>/etc/rsyslog.conf
     DNF_REMOVE
-    rm -rf /etc/keepalived /var/log/keepalived /tmp/keepalived
-    ip addr del "${keepalived_ip}"/24 dev "${net_card}":1
+    rm -rf /etc/keepalived /var/log/keepalived* /tmp/keepalived
+    ip addr del "${keepalived_ip}"/24 dev "${net_card}"
     SSH_CMD "
     kill -9 \$(pgrep -f 'keepalived -D');
-    dnf remove -y keepalived;
-    rm -rf /etc/keepalived /var/log/keepalived  /tmp/keepalived/;" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
+    dnf remove -y keepalived nginx;
+    rm -rf /etc/keepalived /var/log/keepalived*  /tmp/keepalived/;
+    ip addr del ${keepalived_ip}/24 dev ${net_card}" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
     LOG_INFO "Finish environment cleanup!"
 }
 
