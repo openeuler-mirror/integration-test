@@ -19,6 +19,13 @@
 # ############################################
 
 source ../common/prepare_docker.sh
+function config_params() {
+    LOG_INFO "Start loading data."
+    container_name=container_test
+    new_name=container_new
+    LOG_INFO "Loading data is complete."
+}
+
 function pre_test() {
     LOG_INFO "Start environment preparation."
     pre_docker_env
