@@ -27,8 +27,6 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start to run test."
     for i in $(seq 1 50); do
-        DNF_INSTALL vsftpd
-        CHECK_RESULT $?
         systemctl start vsftpd
         systemctl status vsftpd | grep running
         CHECK_RESULT $?

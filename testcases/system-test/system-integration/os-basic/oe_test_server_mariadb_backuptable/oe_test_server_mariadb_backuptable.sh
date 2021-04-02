@@ -29,6 +29,7 @@ function pre_test() {
     DNF_INSTALL "expect mariadb-server"
     rm -rf /var/lib/mysql/*
     systemctl start mariadb.service
+    systemctl status mariadb.service | grep running || exit 1
     mysqladmin -uroot password ${sql_password}
     LOG_INFO "End to prepare the test environment."
 }

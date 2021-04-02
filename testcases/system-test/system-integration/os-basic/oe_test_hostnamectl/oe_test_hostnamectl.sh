@@ -34,7 +34,7 @@ function run_test() {
     CHECK_RESULT $? 1
     expect <<-EOF
     spawn hostnamectl set-hostname -H root@${NODE2_IPV4} new_host
-    logfile tstlog
+    log_file testlog
     expect {
         "Are you sure you want to continue connecting*"
         {

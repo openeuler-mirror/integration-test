@@ -21,16 +21,22 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start executing testcase!"
+    grep -w testgroup /etc/group && groupdel testgroup
     groupadd testgroup
-    cat /etc/group | grep testgroup
+    CHECK_RESULT $?
+    grep -w testgroup /etc/group
     CHECK_RESULT $?
 
-    groupadd -g 66 testgroup1
-    cat /etc/group | grep testgroup1
+    grep -w testgroup1 /etc/group && groupdel testgroup1
+    groupadd -g 6666 testgroup1
+    CHECK_RESULT $?
+    grep -w testgroup1 /etc/group | grep 6666
     CHECK_RESULT $?
 
-    groupadd -g 66 -o testgroup2
-    cat /etc/group | grep testgroup2
+    grep -w testgroup2 /etc/group && groupdel testgroup2
+    groupadd -g 9999 -o testgroup2
+    CHECK_RESULT $?
+    grep -w testgroup2 /etc/group | grep 9999
     CHECK_RESULT $?
 
     groupadd --help

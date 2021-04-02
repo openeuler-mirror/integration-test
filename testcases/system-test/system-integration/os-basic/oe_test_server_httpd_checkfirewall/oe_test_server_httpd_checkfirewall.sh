@@ -22,6 +22,7 @@ function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     DNF_INSTALL firewalld
     systemctl start firewalld
+    systemctl status firewalld | grep running || exit 1
     flag_http=0
     LOG_INFO "End to prepare the test environment."
 }

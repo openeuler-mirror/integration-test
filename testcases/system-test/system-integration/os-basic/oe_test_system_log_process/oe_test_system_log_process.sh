@@ -20,7 +20,7 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function run_test() {
     LOG_INFO "Start to run test."
-    sudo journalctl --unit cron.service -all >systemlog5
+    journalctl --unit cron.service -all >systemlog5
     logsize=$(ls -l systemlog5 | awk '{print $5}')
     [ "$logsize" -gt 0 ]
     CHECK_RESULT $?

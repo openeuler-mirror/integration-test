@@ -21,6 +21,8 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start environment preparation."
+    grep -w testuser1 /etc/passwd && userdel testuser1
+    grep -w testgroup1 /etc/group && groupdel testgroup1
     useradd -u 555 testuser
     groupmod -g 555 testuser
     groupadd -g 72 testgroup1
@@ -30,12 +32,13 @@ function pre_test() {
 function run_test() {
     LOG_INFO "Start executing testcase!"
     usermod -u 666 testuser
-    cat /etc/passwd | grep testuser | awk -F : '{print$3}' | grep 666
+    grep -w testuser /etc/passwd | awk -F : '{print$3}' | grep 666
     CHECK_RESULT $?
     usermod -g 72 testuser
-    cat /etc/passwd | grep testuser | awk -F : '{print$4}' | grep 72
     CHECK_RESULT $?
-    usermod --help
+    grep testuser /etc/passwd | awk -F : '{print$4}' | grep 72
+    CHECK_RESULT $?
+    usermod --help | grep Usage
     CHECK_RESULT $?
     LOG_INFO "End of testcase execution!"
 }

@@ -20,7 +20,17 @@
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function config_params() {
     LOG_INFO "Start loading data!"
-    remote_disk=$(SSH_CMD "lsblk | grep disk | sed -n 2p | awk '{print\$1}'" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER} | tail -n 1 | tr '\r' ' ')
+    SSH_CMD "lsblk > /tmp/diskfile" ${NODE2_IPV4} ${NODE2_PASSWORD} ${NODE2_USER}
+    SSH_SCP "${NODE2_USER}@${NODE2_IPV4}:/tmp/diskfile" ./diskfile "${NODE2_PASSWORD}"
+    disk_list=($(awk '{print$1" "$6}' diskfile | grep disk | awk '{print$1}'))
+    for disk in ${disk_list[@]}; do
+        awk '{print$1}' diskfile | grep -w ${disk} -A 1 | grep -E "└─|├─" >/dev/nul || awk '{print$1" "$6" "$7}' diskfile | grep / | awk '{print$1" "$2}' | grep -w ${disk} | awk '{print$2}' | grep disk >/dev/nul
+        if [ $? -eq 0 ]; then
+            disk_list=(${disk_list[@]/${disk}/})
+        fi
+    done
+    [ ${#disk_list[@]} -ge 1 ] || exit 1
+    remote_disk=$(shuf -e ${disk_list[@]} | head -n 1)
     LOG_INFO "Loading data is complete!"
 }
 function pre_test() {

@@ -76,7 +76,6 @@ oe_test_power_powertop_powerup
 oe_test_power_powertop_startup
 oe_test_server_git_install
 oe_test_server_httpd_checkfirewall
-oe_test_server_httpd_firewall
 oe_test_server_httpd_port
 oe_test_server_httpd_recover
 oe_test_server_httpd_restart

@@ -27,8 +27,10 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start to run test."
-    sed -i 's/#cache_dir ufs \/var\/spool\/squid 120 16 256/cache_dir ufs \/var\/spool\/squid 100 16 256/g' /etc/squid/squid.conf
+    sed -i 's/#cache_dir ufs \/var\/spool\/squid 100 16 256/cache_dir ufs \/var\/spool\/squid 100 16 256/g' /etc/squid/squid.conf
     CHECK_RESULT $?
+    count_line=$(grep -rn "http_access deny all" /etc/squid/squid.conf | awk -F : '{print$1}')
+    test -n ${count_line} && sed -i "${count_line}s/deny/allow/g" /etc/squid/squid.conf
     systemctl enable --now squid
     CHECK_RESULT $?
     echo "http_port 8080" >>/etc/squid/squid.conf
@@ -49,6 +51,7 @@ function run_test() {
 function post_test() {
     LOG_INFO "Start to restore the test environment."
     rm -rf baidu
+    test -n ${count_line} && sed -i "${count_line}s/allow/deny/g" /etc/squid/squid.conf
     DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }

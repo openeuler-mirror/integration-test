@@ -64,7 +64,7 @@ user=mysql" >/etc/my.cnf
     chkconfig mysql on
     [ -n ${mysql_passwd} ] || exit 1
 
-    su - mysql -c "service start mysql" | grep "SUCCESS"
+    su - mysql -c "service mysql start" | grep "SUCCESS"
     CHECK_RESULT $?
     systemctl start mysql
     CHECK_RESULT $?
