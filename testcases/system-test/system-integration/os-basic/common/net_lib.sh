@@ -19,9 +19,9 @@
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 
-function get_free_eth(){
+function get_free_eth() {
     local num_eth=$1
-    LOCAL_ETH=(${NODE1_NICS[@]/$(ip route | grep ${NODE1_IPV4} | awk '{print$3}')})
+    LOCAL_ETH=(${NODE1_NICS[@]/$(ip route | grep ${NODE1_IPV4} | awk '{print$3}')/})
     [ ${#LOCAL_ETH[@]} -ge ${num_eth} ] || exit 1
 }
 

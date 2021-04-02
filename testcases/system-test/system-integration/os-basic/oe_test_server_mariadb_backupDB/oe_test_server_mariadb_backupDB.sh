@@ -41,7 +41,7 @@ function run_test() {
             log_file testlog
             spawn mysqldump -u root -p mysql -r /home/mysql.sql
     	    expect {
-                \"Enter password:\" {send \"${sql_paasword}\r\"}
+                \"Enter password:\" {send \"${sql_password}\r\"}
     	    }
     expect eof
     "

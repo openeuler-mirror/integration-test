@@ -20,6 +20,7 @@
 source ../common/net_lib.sh
 function config_params() {
     LOG_INFO "Start loading data!"
+    get_free_eth 1
     local_eth1=${LOCAL_ETH[0]}
     LOG_INFO "Loading data is complete!"
 }

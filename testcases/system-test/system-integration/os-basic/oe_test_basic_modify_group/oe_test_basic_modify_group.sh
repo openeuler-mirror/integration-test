@@ -25,22 +25,22 @@ function pre_test() {
     grep -w testgroup1 /etc/group && groupdel testgroup1
     useradd testuser1
     groupadd testgroup1
-    groupmod -g 66 testgroup1
+    groupmod -g 6666 testgroup1
     LOG_INFO "Environmental preparation is over."
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase!"
-    grep -w testgroup1 /etc/group | grep 66
+    grep -w testgroup1 /etc/group | grep 6666
     CHECK_RESULT $?
-    groupmod -g 88 testgroup1
+    groupmod -g 8888 testgroup1
     CHECK_RESULT $?
-    grep -w testgroup1 /etc/group | grep 88
+    grep -w testgroup1 /etc/group | grep 8888
     CHECK_RESULT $?
 
     groupmod -n testgroup2 testgroup1
     CHECK_RESULT $?
-    grep -w testgroup2 /etc/group | grep 88
+    grep -w testgroup2 /etc/group | grep 8888
     CHECK_RESULT $?
 
     grep -w testgroup1 /etc/group
