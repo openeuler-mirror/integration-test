@@ -25,8 +25,8 @@ function pre_test() {
 }
 
 function run_test() {
-    disk=$(lsblk -S -o NAME,TYPE | grep -w disk | head -1 | awk '{print $1}')
-    if [ -z "${disk}" ];then
+    disk=$(lsblk -S -o NAME,TYPE | grep -v NAME | head -1 | awk '{print $1}')
+    if [ -z "${disk}" ]; then
         LOG_INFO "no available disk found, skip $0"
         return 0
     fi

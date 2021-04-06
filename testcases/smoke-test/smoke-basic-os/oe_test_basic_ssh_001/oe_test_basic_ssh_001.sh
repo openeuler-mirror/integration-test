@@ -34,10 +34,10 @@ function run_test() {
     sed -i 's/#%wheel/%wheel/g' /etc/sudoers
     usermod -aG wheel testuser1
     passwd testuser1 <<EOF
-${LOCAL_PASSWD}
-${LOCAL_PASSWD}
+${NODE1_PASSWORD}
+${NODE1_PASSWORD}
 EOF
-    password="${LOCAL_PASSWD}"
+    password="${NODE1_PASSWORD}"
     expect <<EOF1
         set timeout 15
         log_file log

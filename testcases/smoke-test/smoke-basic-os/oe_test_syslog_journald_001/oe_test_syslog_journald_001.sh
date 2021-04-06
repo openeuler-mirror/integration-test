@@ -28,19 +28,20 @@ function pre_test() {
 
 function run_test() {
 	LOG_INFO "Start to run test."
+	path=$(systemctl status systemd-journald.service | grep 'Journal (/' | head -1 | awk -F '/' '{print $2}')
 	grep Storage /etc/systemd/journald.conf | egrep "Storage=auto|Storage=persistent"
 	CHECK_RESULT $?
-	folder=$(ls /var/log/journal/)
-	cp -r /var/log/journal/$folder /var/log/journal/${folder}bak
-	rm -rf /var/log/journal/$folder
+	folder=$(ls /${path}/log/journal/)
+	cp -r /${path}/log/journal/$folder /${path}/log/journal/${folder}bak
+	rm -rf /${path}/log/journal/$folder
 	systemctl restart systemd-journald.service
-	if [ ! -d "/var/log/journal/$folder" ]; then
+	if [ ! -d "/${path}/log/journal/$folder" ]; then
 		CHECK_RESULT 0 1
-		cp -r /var/log/journal/${folder}bak /var/log/journal/${folder}
+		cp -r /${path}/log/journal/${folder}bak /${path}/log/journal/${folder}
 	fi
-	check_file=$(ls -la /var/log/journal/${folder} | grep "^-" | grep "journal" | wc -l)
+	check_file=$(ls -la /${path}/log/journal/${folder} | grep "^-" | grep "journal" | wc -l)
 	CHECK_RESULT $check_file 1
-	journalctl --file /var/log/journal/${folder}/system.journal >systemlog1
+	journalctl --file /${path}/log/journal/${folder}/system.journal >systemlog1
 	logsize=$(grep -v ' No entries ' systemlog1 | wc -l)
 	test $((logsize)) -gt 1
 	CHECK_RESULT $?
@@ -49,7 +50,7 @@ function run_test() {
 
 function post_test() {
 	LOG_INFO "Start to restore the test environment."
-	rm -rf /var/log/journal/${folder}bak
+	rm -rf /${path}/log/journal/${folder}bak
 	rm -rf systemlog1
 	LOG_INFO "End to restore the test environment."
 }

@@ -33,8 +33,9 @@ function run_test() {
     localectl status | grep -i 'system locale'
     CHECK_RESULT $?
     now_LANG=$(localectl status | grep -i 'system locale' | awk -F ': ' '{print $2}')
-    localectl set-locale LANG=locale
-    localectl status | grep -i 'system locale' | awk -F "=" '{print$2}' | grep "locale"
+    set_LANG=$(localectl list-locales | grep -v $now_LANG | head -1)
+    localectl set-locale LANG=$set_LANG
+    localectl status | grep -i 'system locale' | awk -F "=" '{print$2}' | grep $set_LANG
     CHECK_RESULT $?
     LOG_INFO "Finish test!"
 }

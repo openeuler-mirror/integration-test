@@ -34,8 +34,8 @@ function run_test() {
     LOG_INFO "Start testing..."
     useradd testuser
     passwd testuser <<EOF
-$LOCAL_PASSWD
-$LOCAL_PASSWD
+$NODE1_PASSWORD
+$NODE1_PASSWORD
 EOF
 
     CHECK_RESULT $?
