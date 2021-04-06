@@ -1,0 +1,11 @@
+oe_test_rabbitmqctl_access
+oe_test_rabbitmqctl_app
+oe_test_rabbitmqctl_cluster
+oe_test_rabbitmqctl_encode
+oe_test_rabbitmqctl_parameter
+oe_test_rabbitmqctl_policy
+oe_test_rabbitmqctl_status
+oe_test_rabbitmqctl_user
+oe_test_rabbitmq-plugins_list
+oe_test_rabbitmq-plugins
+oe_test_rabbitmq-server
