@@ -29,6 +29,8 @@ function pre_test() {
 function run_test() {
 	LOG_INFO "Start to run test."
 	rm -rf systemlog3
+	systemctl restart sshd
+	sleep 1
 	journalctl --unit sshd -all >systemlog3
 	logsize=$(grep -v ' No entries ' systemlog3 | wc -l)
 	test $((logsize)) -gt 1
