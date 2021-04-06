@@ -32,3 +32,4 @@ oe_test_ssh_version2
 oe_test_ssh_warnings
 oe_test_use_security_tools
 oe_test_use_su_Initialize_path
+oe_test_restrict_accounts_use_su

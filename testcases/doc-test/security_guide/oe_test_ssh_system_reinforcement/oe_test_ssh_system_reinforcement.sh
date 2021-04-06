@@ -39,7 +39,7 @@ function run_test() {
     CHECK_RESULT $?
     grep "^ClientAliveCountMax 0" /etc/ssh/sshd_config
     CHECK_RESULT $?
-    grep "^MACs hmac-sha2-512,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-256-etm@openssh.com,hmac-sha1,hmac-sha1-etm@openssh.com" /etc/ssh/sshd_config
+    grep "^MACs hmac-sha2-512,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha2-256-etm@openssh.com" /etc/ssh/sshd_config
     CHECK_RESULT $?
     grep "^AllowTcpForwarding no" /etc/ssh/sshd_config
     CHECK_RESULT $?

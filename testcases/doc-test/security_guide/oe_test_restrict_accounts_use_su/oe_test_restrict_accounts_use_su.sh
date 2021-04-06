@@ -14,45 +14,49 @@
 # @Contact   :   yang_lijin@qq.com
 # @Date      :   2021/03/11
 # @License   :   Mulan PSL v2
-# @Desc      :   Set the user's default umask value to 022
+# @Desc      :   restrict accounts use su
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function pre_test() {
     LOG_INFO "Start environmental preparation."
-    rm -rf test1 test2 
-    grep "^test:" /etc/passwd && userdel -rf test
+    grep "^test1:" /etc/passwd && userdel -rf test1
+    grep "^test2:" /etc/passwd && userdel -rf test2
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    grep -i "umask 022" /etc/bashrc
-    CHECK_RESULT $? 0 0 "umask error"
-    mkdir /home/test1
-    ls -l /home | grep "test1" | grep "drwxr\-xr\-x"
-    CHECK_RESULT $? 0 0 "dir permission verification failed"
-    touch /home/test2
-    ls -l /home/test2 | grep "\-rw\-r\-\-r\-\-"
-    CHECK_RESULT $? 0 0 "file permission verification failed"
-    LOG_INFO "Finish testcase execution."
-    useradd test
-    passwd test <<EOF
+    grep 'pam_wheel.so' /etc/pam.d/su | grep 'required'
+    CHECK_RESULT $? 0 0 "check /etc/pam.d/su failed"
+    useradd test1
+    passwd test1 <<EOF
 ${NODE1_PASSWORD}
 ${NODE1_PASSWORD}
 EOF
-   su - test -c "mkdir test3"
-   su - test -c "ls -l | grep "test3" | grep 'drwxr\-xr\-x'"
-   CHECK_RESULT $? 0 0 "dir permission verification failed"
-   su - test -c "touch test4"
-   su - test -c "ls -l test4 | grep '\-rw\-r\-\-r\-\-'"
-   CHECK_RESULT $? 0 0 "file permission verification failed"
-
+    useradd test2
+    passwd test2 <<EOF
+${NODE1_PASSWORD}
+${NODE1_PASSWORD}
+EOF
+    usermod -aG wheel test2
+    groups test2 | grep 'wheel'
+    CHECK_RESULT $? 0 0 "add test2 to group wheel failed"
+    su - test1 -c "su" <<EOF
+${NODE1_PASSWORD}
+EOF
+    CHECK_RESULT $? 0 1 "check su test1 failed"
+    su - test2 -c "su" <<EOF
+${NODE1_PASSWORD}
+EOF
+    CHECK_RESULT $? 0 0 "check su test2 failed"
+    LOG_INFO "Finish testcase execution."
 }
+
 function post_test() {
     LOG_INFO "start environment cleanup."
-    userdel -rf test
-    rm -rf test1 test2
+    userdel -rf test1
+    userdel -rf test2
     LOG_INFO "Finish environment cleanup!"
 }
 
