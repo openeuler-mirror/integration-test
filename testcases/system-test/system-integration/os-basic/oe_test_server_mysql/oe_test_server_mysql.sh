@@ -10,54 +10,51 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @CaseName  :   oe_test_docker_rename_pause_resume_001
+# @CaseName  :   oe_test_server_mysql_001
 # @Author    :   Classicriver_jia
 # @Contact   :   classicriver_jia@foxmail.com
-# @Date      :   2020-06-08
+# @Date      :   2020.4.27
 # @License   :   Mulan PSL v2
-# @Desc      :   Rename container/pause and resume container process
+# @Desc      :   mysql restarts repeatedly
 # ############################################
 
-source ../common/prepare_docker.sh
-function config_params() {
-    LOG_INFO "Start loading data."
-    container_name=container_test
-    new_name=container_new
-    LOG_INFO "Loading data is complete."
-}
-
+source ../common/mysql_pre.sh
 function pre_test() {
     LOG_INFO "Start environment preparation."
-    pre_docker_env
+    mysql_pre
     LOG_INFO "Environmental preparation is over."
 }
 
 function run_test() {
     LOG_INFO "Start executing testcase."
-    docker run -itd --name=${container_name} ${Images_name}
-    CHECK_RESULT $?
+    for mysql_count in $(seq 1 10); do
+        systemctl start mysql
+        CHECK_RESULT $?
 
-    docker rename ${container_name} ${new_name}
-    CHECK_RESULT $?
-    docker ps -a | grep ${new_name}
-    CHECK_RESULT $?
-    docker ps -a | grep ${container_name}
-    CHECK_RESULT $? 1
+        systemctl restart mysql
+        CHECK_RESULT $?
 
-    docker pause ${new_name}
-    CHECK_RESULT $?
-    docker inspect -f {{.State.Status}} ${new_name} | grep paused
+        systemctl stop mysql
+        systemctl disable mysql
+        CHECK_RESULT $?
+        SLEEP_WAIT 2
+    done
 
-    docker unpause ${new_name}
+    sql_pid=$(ps -ef | grep -w mysql | grep -v grep | awk '{print$2}')
+    kill -9 ${sql_pid}
+    DNF_REMOVE mysql
     CHECK_RESULT $?
-    docker inspect -f {{.State.Status}} ${new_name} | grep running
     LOG_INFO "End of testcase execution."
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    clean_docker_env
+    sed -i 's/SELINUX=disabled/SELINUX=enforcing/g' /etc/sysconfig/selinux
+    rm -rf /data/mysql
     DNF_REMOVE
+    userdel -r mysql
+    sed -i "/export\ PATH/d" /etc/profile
+    rm -rf /tmp/mysql.sock
     LOG_INFO "Finish environment cleanup."
 }
 

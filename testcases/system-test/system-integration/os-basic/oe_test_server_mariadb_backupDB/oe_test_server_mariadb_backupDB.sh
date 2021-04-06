@@ -10,41 +10,53 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   doraemon2020
-# @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Author    :   Classicriver_jia
+# @Contact   :   classicriver_jia@foxmail.com
+# @Date      :   2020-4-9
 # @License   :   Mulan PSL v2
-# @Desc      :   Verify support for hardware timestamps
-# ############################################
+# @Desc      :   Back up the entire database using mysqldump
+# #############################################
 
-source ../common/net_lib.sh
+source ${OET_PATH}/libs/locallibs/common_lib.sh
 function config_params() {
-    LOG_INFO "Start loading data!"
-    get_free_eth 1
-    local_eth1=${LOCAL_ETH[0]}
-    LOG_INFO "Loading data is complete!"
+    LOG_INFO "Start to config params of the case."
+    sql_password="${NODE1_PASSWORD}"
+    LOG_INFO "End to config params of the case."
 }
 
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL "chrony ntpstat"
-    systemctl start chronyd
+    DNF_INSTALL "mariadb-server mariadb"
+    rm -rf /var/lib/mysql/*
+    systemctl start mariadb.service
+    systemctl status mariadb.service | grep running || exit 1
+    mysqladmin -uroot password ${sql_password}
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    systemctl status chronyd | grep running
+    expect -c "
+            set timeout 30
+            log_file testlog
+            spawn mysqldump -u root -p mysql -r /home/mysql.sql
+    	    expect {
+                \"Enter password:\" {send \"${sql_password}\r\"}
+    	    }
+    expect eof
+    "
+    grep -iE 'error|fail|while executing' testlog
+    CHECK_RESULT $? 1
+    find /home/mysql.sql
     CHECK_RESULT $?
-    CHECK_RESULT "$(ethtool -T ${local_eth1} | grep -iE "Capabilities|PTP|Hardware" | wc -l)" 4
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    systemctl stop chronyd
+    rm -rf /home/mysql.sql testlog
     DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }
 
-main "$@"
+main $@

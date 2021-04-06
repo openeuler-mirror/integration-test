@@ -10,54 +10,56 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @CaseName  :   oe_test_docker_rename_pause_resume_001
-# @Author    :   Classicriver_jia
-# @Contact   :   classicriver_jia@foxmail.com
-# @Date      :   2020-06-08
+# @CaseName  :   oe_test_basic_UserMgmt_003
+# @Author    :   xuchunlin
+# @Contact   :   xcl_job@163.com
+# @Date      :   2020-04-09
 # @License   :   Mulan PSL v2
-# @Desc      :   Rename container/pause and resume container process
+# @Desc      :   Modity User Group test
 # ############################################
 
-source ../common/prepare_docker.sh
-function config_params() {
-    LOG_INFO "Start loading data."
-    container_name=container_test
-    new_name=container_new
-    LOG_INFO "Loading data is complete."
-}
-
+source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start environment preparation."
-    pre_docker_env
+    grep -w testuser1 /etc/passwd && userdel testuser1
+    grep -w testgroup1 /etc/group && groupdel testgroup1
+    useradd testuser1
+    groupadd testgroup1
+    groupmod -g 6666 testgroup1
     LOG_INFO "Environmental preparation is over."
 }
 
 function run_test() {
-    LOG_INFO "Start executing testcase."
-    docker run -itd --name=${container_name} ${Images_name}
+    LOG_INFO "Start executing testcase!"
+    grep -w testgroup1 /etc/group | grep 6666
+    CHECK_RESULT $?
+    groupmod -g 8888 testgroup1
+    CHECK_RESULT $?
+    grep -w testgroup1 /etc/group | grep 8888
     CHECK_RESULT $?
 
-    docker rename ${container_name} ${new_name}
+    groupmod -n testgroup2 testgroup1
     CHECK_RESULT $?
-    docker ps -a | grep ${new_name}
+    grep -w testgroup2 /etc/group | grep 8888
     CHECK_RESULT $?
-    docker ps -a | grep ${container_name}
+
+    grep -w testgroup1 /etc/group
     CHECK_RESULT $? 1
 
-    docker pause ${new_name}
+    usermod -a -G testgroup2 testuser1
     CHECK_RESULT $?
-    docker inspect -f {{.State.Status}} ${new_name} | grep paused
+    grep -w testgroup2 /etc/group | grep testuser1
+    CHECK_RESULT $?
 
-    docker unpause ${new_name}
+    groupmod --help | grep Usage
     CHECK_RESULT $?
-    docker inspect -f {{.State.Status}} ${new_name} | grep running
-    LOG_INFO "End of testcase execution."
+    LOG_INFO "End of testcase execution!"
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    clean_docker_env
-    DNF_REMOVE
+    groupdel testgroup2
+    userdel -r testuser1
     LOG_INFO "Finish environment cleanup."
 }
 

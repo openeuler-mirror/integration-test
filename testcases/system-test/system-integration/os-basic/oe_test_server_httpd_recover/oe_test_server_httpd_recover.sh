@@ -10,39 +10,38 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   doraemon2020
-# @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Author    :   Classicriver_jia
+# @Contact   :   classicriver_jia@foxmail.com
+# @Date      :   2020-4-9
 # @License   :   Mulan PSL v2
-# @Desc      :   Verify support for hardware timestamps
-# ############################################
+# @Desc      :   Profile lost / recovered
+# #############################################
 
-source ../common/net_lib.sh
-function config_params() {
-    LOG_INFO "Start loading data!"
-    get_free_eth 1
-    local_eth1=${LOCAL_ETH[0]}
-    LOG_INFO "Loading data is complete!"
-}
-
+source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL "chrony ntpstat"
-    systemctl start chronyd
+    DNF_INSTALL httpd
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    systemctl status chronyd | grep running
+    systemctl start httpd
+    systemctl status httpd | grep running
     CHECK_RESULT $?
-    CHECK_RESULT "$(ethtool -T ${local_eth1} | grep -iE "Capabilities|PTP|Hardware" | wc -l)" 4
+    mv /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf_bak
+    systemctl restart httpd
+    systemctl status httpd | grep running
+    CHECK_RESULT $? 1
+    mv /etc/httpd/conf/httpd.conf_bak /etc/httpd/conf/httpd.conf
+    systemctl restart httpd.service
+    systemctl status httpd | grep running
+    CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    systemctl stop chronyd
     DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }

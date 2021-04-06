@@ -12,53 +12,52 @@
 # #############################################
 # @Author    :   doraemon2020
 # @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-28
+# @Date      :   2020-04-27
 # @License   :   Mulan PSL v2
-# @Desc      :   Run a batch of programs regularly-at
+# @Desc      :   Use the timedatectl command to set the time
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL at
-    systemctl start atd
     time=$(date "+%Y-%m-%d %H:%M:%S")
-    old_count=$(atq | wc -l)
-    if [ ${old_count} -eq 0 ]; then
-        atq_flag=0
-    else
-        atq_flag=$(atq | sort -r | awk '{print$1}' | sed -n 1p)
-    fi
+    timedatectl set-ntp no
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    echo -e "echo hello1 > /tmp/test" | at 11:30pm
-    echo -e "echo hello2 > /tmp/test" | at 16:35
-    echo -e "echo hello3 > /tmp/test" | at now+4 hours
-    echo -e "echo hello4 > /tmp/test" | at now+240 minutes
-    echo -e "echo hello5 > /tmp/test" | at 16:30 12.12.29
-    echo -e "echo hello6 > /tmp/test" | at 16:30 12/12/29
-    echo -e "echo hello7 > /tmp/test" | at 16:30 Dec 12
-    new_count=$(atq | wc -l)
-    CHECK_RESULT "${new_count}" $((${old_count} + 7))
-    date -s "23:29:30"
-    rm -rf /tmp/test
-    SLEEP_WAIT 60
-    grep "hello1" /tmp/test
+    timedatectl | grep "Local time"
+    CHECK_RESULT $?
+    timedatectl set-ntp yes
+    CHECK_RESULT $?
+    SLEEP_WAIT 5
+    timedatectl | grep "NTP service" | grep " active"
+    CHECK_RESULT $?
+    timedatectl set-ntp no
+    SLEEP_WAIT 5
+    timedatectl set-time '2019-08-14'
+    CHECK_RESULT $?
+    timedatectl | grep "Local time" | grep "2019-08-14"
+    CHECK_RESULT $?
+    timedatectl set-time 15:00:00
+    CHECK_RESULT $?
+    timedatectl | grep "Local time" | grep "15:00"
+    CHECK_RESULT $?
+    ret=$(timedatectl list-timezones | grep Asia | wc -l)
+    CHECK_RESULT $ret 0 1
+    timedatectl set-timezone Asia/Beijing
+    timedatectl | grep "Asia\/Beijing"
     CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    for i in $(seq $(($atq_flag + 1)) $(($atq_flag + 7))); do
-        atrm ${i}
-    done
-    date -s "$time 1 minute"
-    rm -rf /tmp/test
-    DNF_REMOVE at
+    timedatectl set-timezone Asia/Shanghai
+    timedatectl set-ntp yes
+    date -s "$time"
+    hwclock -w
     LOG_INFO "End to restore the test environment."
 }
 

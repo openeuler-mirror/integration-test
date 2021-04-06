@@ -10,39 +10,36 @@
 # See the Mulan PSL v2 for more details.
 
 # #############################################
-# @Author    :   doraemon2020
-# @Contact   :   xcl_job@163.com
-# @Date      :   2020-04-09
+# @Author    :   Classicriver_jia
+# @Contact   :   classicriver_jia@foxmail.com
+# @Date      :   2020-4-27
 # @License   :   Mulan PSL v2
-# @Desc      :   Verify support for hardware timestamps
-# ############################################
+# @Desc      :   Httpd port occupied
+# #############################################
 
-source ../common/net_lib.sh
-function config_params() {
-    LOG_INFO "Start loading data!"
-    get_free_eth 1
-    local_eth1=${LOCAL_ETH[0]}
-    LOG_INFO "Loading data is complete!"
-}
-
+source ${OET_PATH}/libs/locallibs/common_lib.sh
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
-    DNF_INSTALL "chrony ntpstat"
-    systemctl start chronyd
+    DNF_INSTALL "nc httpd"
     LOG_INFO "End to prepare the test environment."
 }
 
 function run_test() {
     LOG_INFO "Start to run test."
-    systemctl status chronyd | grep running
+    nc -l 80 &
+    systemctl start httpd
+    CHECK_RESULT $? 1
+    pid=$(pgrep -f "nc -l")
+    kill -9 "$pid"
+    systemctl start httpd
     CHECK_RESULT $?
-    CHECK_RESULT "$(ethtool -T ${local_eth1} | grep -iE "Capabilities|PTP|Hardware" | wc -l)" 4
+    systemctl status httpd | grep running
+    CHECK_RESULT $?
     LOG_INFO "End to run test."
 }
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
-    systemctl stop chronyd
     DNF_REMOVE
     LOG_INFO "End to restore the test environment."
 }
