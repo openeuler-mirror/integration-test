@@ -17,7 +17,6 @@
 # @Desc      :   hdparm test
 # ############################################
 
-set -eo pipefail
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 
 function pre_test() {
@@ -32,8 +31,11 @@ function run_test() {
     fi
 
     hdparm -a /dev/${disk} | grep readahead
+    CHECK_RESULT $?
     hdparm -r /dev/${disk} | grep readonly
+    CHECK_RESULT $?
     hdparm -F /dev/${disk}
+    CHECK_RESULT $?
 }
 
 main $@

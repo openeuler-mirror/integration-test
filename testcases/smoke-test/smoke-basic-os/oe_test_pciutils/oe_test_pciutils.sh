@@ -28,7 +28,7 @@ function run_test() {
     lspci 2> error.log
     test -s error.log && return 1
     update-pciids
-    lspci | grep "PCI bridge"
+    lspci | grep "00:00.0"
 }
 
 function post_test() {
