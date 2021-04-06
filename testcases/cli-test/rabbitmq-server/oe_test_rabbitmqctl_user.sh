@@ -57,7 +57,7 @@ function post_test() {
     systemctl stop rabbitmq-server
     DNF_REMOVE
     rm -rf /var/lib/rabbitmq/
-    kill -9 $(ps -u rabbitmq | grep -v PID | awk '{print$1}')
+    kill -9 $(pgrep -u rabbitmq)
     LOG_INFO "Finish environment cleanup!"
 }
 main "$@"

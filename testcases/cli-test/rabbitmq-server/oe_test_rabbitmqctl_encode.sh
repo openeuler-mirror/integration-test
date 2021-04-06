@@ -30,8 +30,13 @@ function pre_test() {
 
 function run_test() {
     LOG_INFO "Start testing..."
-    rabbitmqctl set_vm_memory_high_watermark absolute 1G | grep "1G bytes"
-    CHECK_RESULT $?
+    mem_size=$(free -g | grep Mem | awk '{print $2}')
+    if [ "${mem_size}" -gt 1 ]; then
+        rabbitmqctl set_vm_memory_high_watermark absolute 1G | grep "1G bytes"
+        CHECK_RESULT $?
+    else
+        LOG_INFO "The current environment does not meet the test conditions!"
+    fi
     rabbitmqctl set_disk_free_limit 1G | grep "1G bytes"
     CHECK_RESULT $?
     rabbitmqctl set_disk_free_limit mem_relative 2.0 | grep "2.0 times"
@@ -58,7 +63,8 @@ function post_test() {
     systemctl stop rabbitmq-server
     DNF_REMOVE
     rm -rf /var/lib/rabbitmq/
-    kill -9 $(ps -u rabbitmq | grep -v PID | awk '{print$1}')
+    kill -9 $(pgrep -u rabbitmq)
     LOG_INFO "Finish environment cleanup!"
 }
+
 main "$@"

@@ -99,7 +99,7 @@ function post_test() {
     kill -9 "$(pgrep -f erlang)"
     sed -i "/${name_host}/d" /etc/hosts
     hostnamectl set-hostname "${host_name}"
-    kill -9 $(ps -u rabbitmq | grep -v PID | awk '{print$1}')
+    kill -9 $(pgrep -u rabbitmq)
     DNF_REMOVE
     rm -rf /var/lib/rabbitmq/ /var/log/rabbitmq
     SSH_CMD "
