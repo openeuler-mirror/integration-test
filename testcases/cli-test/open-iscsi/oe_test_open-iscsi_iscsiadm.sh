@@ -31,13 +31,13 @@ function run_test() {
     CHECK_RESULT $?
     test "$(iscsiadm -V | grep -Eo "[0-9]*\.[0-9]*\.[0-9]*")" == "$(rpm -qa open-iscsi | awk -F "-" '{print$3}')"
     CHECK_RESULT $?
+    iscsiadm -m discoverydb -t st -p "${NODE2_IPV4}" -I iface."${LOCAL_NICS}" --discover | grep 'iqn.2020-08.com.example:server'
+    CHECK_RESULT $?
+    iscsiadm -m discovery -t st -p "${NODE2_IPV4}" -I iface."${LOCAL_NICS}" --discover | grep 'iqn.2020-08.com.example:server'
+    CHECK_RESULT $?
     iscsiadm -m discoverydb -d 4 -P 1 -t sendtargets -p "${NODE2_IPV4}" --discover | grep 'iqn.2020-08.com.example:server'
     CHECK_RESULT $?
     iscsiadm -m discovery -d 4 -P 1 -t sendtargets -p "${NODE2_IPV4}" --discover | grep 'iqn.2020-08.com.example:server'
-    CHECK_RESULT $?
-    iscsiadm -m discoverydb -t st -p "${NODE2_IPV4}" -I iface."${NODE1_NICS}" --discover | grep 'iqn.2020-08.com.example:server'
-    CHECK_RESULT $?
-    iscsiadm -m discovery -t st -p "${NODE2_IPV4}" -I iface."${NODE1_NICS}" --discover | grep 'iqn.2020-08.com.example:server'
     CHECK_RESULT $?
     iscsiadm -m discoverydb -t st -p "${NODE2_IPV4}" -o show | grep 'sendtargets'
     CHECK_RESULT $?
@@ -88,7 +88,7 @@ function post_test() {
     LOG_INFO "Start to restore the test environment."
     SSH_CMD "dnf remove targetcli net-tools -y;sleep 1;
     dd if=/dev/zero of=/dev/${unused_disk} bs=2G count=1;
-    rm -rf /home/disk_info.sh;
+    rm -rf /tmp/disk_info.sh;
     " "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
     DNF_REMOVE
     rm -rf /etc/iscsi/*

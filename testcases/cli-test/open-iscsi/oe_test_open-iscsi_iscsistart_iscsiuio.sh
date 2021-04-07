@@ -67,7 +67,7 @@ function post_test() {
     LOG_INFO "Start to restore the test environment."
     SSH_CMD "dnf remove targetcli net-tools -y;sleep 1;
     dd if=/dev/zero of=/dev/${unused_disk} bs=2G count=1;
-    rm -rf disk_info.sh;
+    rm -rf /tmp/disk_info.sh;
     " "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}"
     DNF_REMOVE
     pkill -9 iscsiuio_log

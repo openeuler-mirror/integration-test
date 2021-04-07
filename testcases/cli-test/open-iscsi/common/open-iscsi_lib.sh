@@ -18,9 +18,11 @@
 
 source "${OET_PATH}"/libs/locallibs/common_lib.sh
 function TARGET_CONF() {
-    SSH_SCP ./common/disk_info.sh "${NODE2_USER}"@"${NODE2_IPV4}":/home/ "${NODE2_PASSWORD}"
-    unused_disk="$(SSH_CMD "sh /home/disk_info.sh" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" | tail -n 1 | tr -d "echo|\r| ")"
+    SSH_SCP ./common/disk_info.sh "${NODE2_USER}"@"${NODE2_IPV4}":/tmp/ "${NODE2_PASSWORD}"
+    unused_disk="$(SSH_CMD "sh /tmp/disk_info.sh" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" | tail -n 1 | tr -d "echo|\r| ")"
     test_disk=/dev/"${unused_disk}"1
+    LOCAL_NICS=$(ip route | grep ${NODE1_IPV4} | awk '{print$3}')
+    LOCAL_MAC=$(cat /sys/class/net/${LOCAL_NICS}/address)
     SSH_CMD "
     dnf install targetcli net-tools -y;
     systemctl stop firewalld;
@@ -38,11 +40,11 @@ function TARGET_CONF() {
     systemctl restart iscsid
     SLEEP_WAIT 2
     systemctl status iscsid | grep -i "running" || exit 1
-    cp -r /etc/iscsi/ifaces/iface.example /etc/iscsi/ifaces/iface."${NODE1_NICS}"
+    cp -r /etc/iscsi/ifaces/iface.example /etc/iscsi/ifaces/iface."${LOCAL_NICS}"
     echo "iface.transport_name = tcp
 iface.initiatorname = iqn.2020-08.com.example:client
-iface.net_ifacename = ${NODE1_NICS}
-iface.hwaddress = ${NODE1_MAC}
+iface.net_ifacename = ${LOCAL_NICS}
+iface.hwaddress = ${LOCAL_MAC}
 iface.ipaddress = ${NODE1_IPV4}
-iface.bootproto = static" >/etc/iscsi/ifaces/iface."${NODE1_NICS}"
+iface.bootproto = static" >/etc/iscsi/ifaces/iface."${LOCAL_NICS}"
 }
