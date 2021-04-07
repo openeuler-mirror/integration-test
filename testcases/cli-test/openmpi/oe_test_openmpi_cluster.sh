@@ -90,25 +90,25 @@ function run_test() {
         grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
     printf "node1 slots=2\nnode2 slots=2" >./myhostfile
-    test "$(mpirun --allow-run-as-root -np 4 -hostfile myhostfile ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 4 -hostfile myhostfile ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 4
     CHECK_RESULT $?
-    test "$(mpirun --allow-run-as-root -np 2 -H node1,node2 -npersocket 1 ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 2 -H node1,node2 -npersocket 1 ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
-    test "$(mpirun --allow-run-as-root -np 2 -H node1,node2 -npernode 1 ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 2 -H node1,node2 -npernode 1 ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
-    test "$(mpirun --allow-run-as-root -np 2 -H node1,node2 -pernode ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 2 -H node1,node2 -pernode ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
-    test "$(mpirun --allow-run-as-root -np 4 --byslot --hostfile myhostfile ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 4 --byslot --hostfile myhostfile ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 4
     CHECK_RESULT $?
     test "$(mpirun --allow-run-as-root --mca rmaps_base_schedule_policy slot -np 4 ./testfile 2>&1 | \
         grep -c "processor node1")" -eq 4
     CHECK_RESULT $?
-    test "$(mpirun --allow-run-as-root -np 4 --bynode --hostfile myhostfile ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -np 4 --bynode --hostfile myhostfile ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 4
     CHECK_RESULT $?
     test "$(mpirun --allow-run-as-root --mca rmaps_base_schedule_policy node -np 4 \
@@ -125,7 +125,7 @@ function run_test() {
         core --bind-to core ./testfile 2>&1 | grep -c "core")" -eq 4
     CHECK_RESULT $?
     printf "rank 0=node1 slot=1\nrank 1=node2 slot=1" > ./myrankfile
-    test "$(mpirun --allow-run-as-root -H node1,node2 -rf myrankfile ./testfile 2>&1 | \
+    test "$(mpirun --allow-run-as-root --oversubscribe -H node1,node2 -rf myrankfile ./testfile 2>&1 | \
         grep -c -e "processor node1" -e "processor node2")" -eq 2
     CHECK_RESULT $?
     test "$(mpirun --allow-run-as-root --prefix /usr/lib64/openmpi -H node2 ./testfile 2>&1 | \
