@@ -19,14 +19,15 @@
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
 function config_params() { 
-    LOG_INFO "This test case has no config params to load!"
+    LOG_INFO "Start config params preparation."
+    cur_date=$(date +%Y%m%d%H%M%S)
+    group="testGroup"$cur_date
+    user="testUser"$cur_date
+    LOG_INFO "End of config params preparation!"
 }
 
 function pre_test() {
     LOG_INFO "Start environment preparation."
-    cur_date=$(date +%Y%m%d%H%M%S)
-    group="testGroup"$cur_date
-    user="testUser"$cur_date
     cat /etc/passwd | grep "$user:" && userdel -rf $user
     cat /etc/group | grep "$group:" && groupdel test
     LOG_INFO "End of environmental preparation!"
