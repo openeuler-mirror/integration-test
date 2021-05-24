@@ -47,6 +47,7 @@ function post_test() {
     LOG_INFO "start environment cleanup."
     userdel -r testuser
     groupdel testgroup1
+    groupdel testuser
     LOG_INFO "Finish environment cleanup."
 }
 

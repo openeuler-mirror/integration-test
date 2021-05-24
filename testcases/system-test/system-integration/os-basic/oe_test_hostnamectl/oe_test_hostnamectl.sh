@@ -49,7 +49,7 @@ function run_test() {
     }
     expect eof
 EOF
-    grep -iE "fail|errot" testlog
+    grep -iE "fail|error" testlog
     CHECK_RESULT $? 1
     SSH_CMD "hostnamectl status" "${NODE2_IPV4}" "${NODE2_PASSWORD}" "${NODE2_USER}" | tail -n 10 | grep new_host
     CHECK_RESULT $?
@@ -58,6 +58,8 @@ EOF
 
 function post_test() {
     LOG_INFO "Start to restore the test environment."
+
+    rm -f testlog
     hostnamectl set-hostname ${localhost}
     expect <<-EOF
     spawn hostnamectl set-hostname -H root@${NODE2_IPV4} ${localhost}
@@ -75,6 +77,7 @@ function post_test() {
     }
     expect eof
 EOF
+
     LOG_INFO "End to restore the test environment."
 }
 

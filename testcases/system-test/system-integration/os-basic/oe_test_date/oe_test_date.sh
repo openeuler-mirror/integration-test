@@ -18,6 +18,8 @@
 # ############################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
+export LC_TIME=en_US.UTF-8
+
 function pre_test() {
     LOG_INFO "Start to prepare the test environment."
     time=$(date "+%Y-%m-%d %H:%M:%S")

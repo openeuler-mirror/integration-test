@@ -18,41 +18,45 @@
 # ############################################
 
 source "$OET_PATH/libs/locallibs/common_lib.sh"
-function config_params() {
-    LOG_INFO "This test case has no config params to load!"
+function config_params() { 
+    LOG_INFO "Start config params preparation."
+    cur_date=$(date +%Y%m%d%H%M%S)
+    group="testGroup"$cur_date
+    user="testUser"$cur_date
+    LOG_INFO "End of config params preparation!"
 }
 
 function pre_test() {
     LOG_INFO "Start environment preparation."
-    cat /etc/passwd | grep "testuser1:" && userdel -rf testuser1
-    cat /etc/group | grep "test:" && groupdel test
+    cat /etc/passwd | grep "$user:" && userdel -rf $user
+    cat /etc/group | grep "$group:" && groupdel test
     LOG_INFO "End of environmental preparation!"
 }
 
 function run_test() {
     LOG_INFO "Start testing..."
-    groupadd test
-    gid=$(cat /etc/group | grep test | awk -F':' '{print $3}')
-    useradd -g $gid -s /sbin/nologin -m testuser1
+    groupadd $group
+    gid=$(cat /etc/group | grep $group | awk -F':' '{print $3}')
+    useradd -g $gid -s /sbin/nologin -m $user
     CHECK_RESULT $?
-    su testuser1 | grep 'account is currently not available'
+    su $user | grep 'account is currently not available'
     CHECK_RESULT $?
-    test $(cat /etc/passwd | grep testuser1 | awk -F ':' '{print $4}') -eq $gid
+    test $(cat /etc/passwd | grep $user | awk -F ':' '{print $4}') -eq $gid
     CHECK_RESULT $?
-    ls /home | grep testuser1
+    ls /home | grep $user
     CHECK_RESULT $?
-    userdel -rf testuser1
+    userdel -rf $user
     CHECK_RESULT $?
-    ls /home | grep testuser1
+    ls /home | grep $user
     CHECK_RESULT $? 1
-    cat /etc/passwd | grep testuser1
+    cat /etc/passwd | grep $user
     CHECK_RESULT $? 1
     LOG_INFO "Finish test!"
 }
 
 function post_test() {
     LOG_INFO "start environment cleanup."
-    groupdel test
+    groupdel $group
     LOG_INFO "Finish environment cleanup!"
 }
 
