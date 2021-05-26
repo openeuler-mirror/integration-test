@@ -38,7 +38,7 @@ function run_test() {
 	log_line2=$(cat log | wc -l)
 	test $((log_line1)) -ne $((log_line2))
 	CHECK_RESULT $?
-	grep systemd /var/log/messages >/dev/null
+	grep audit /var/log/messages >/dev/null
 	CHECK_RESULT $?
 	LOG_INFO "End to run test."
 }
