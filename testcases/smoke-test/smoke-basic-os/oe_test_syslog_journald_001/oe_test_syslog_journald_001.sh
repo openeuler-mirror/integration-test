@@ -28,7 +28,11 @@ function pre_test() {
 
 function run_test() {
 	LOG_INFO "Start to run test."
-	path=$(systemctl status systemd-journald.service | grep 'Journal (/' | head -1 | awk -F '/' '{print $2}')
+	if ls /run/log/journal/*; then
+		path=run
+	else
+		path=var
+	fi
 	grep Storage /etc/systemd/journald.conf | egrep "Storage=auto|Storage=persistent"
 	CHECK_RESULT $?
 	folder=$(ls /${path}/log/journal/)
