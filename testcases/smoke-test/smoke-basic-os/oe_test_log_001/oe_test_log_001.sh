@@ -33,7 +33,7 @@ function run_test() {
 	tail -f /var/log/messages >log 2>&1 &
 	row01=$(cat log | wc -l)
 	SLEEP_WAIT 1
-	useradd test1 && userdel -rf test1
+	systemctl restart sshd
 	SLEEP_WAIT 4
 	row02=$(cat log | wc -l)
 	[[ $row01 == ${row02} ]] && ((exec_result++))

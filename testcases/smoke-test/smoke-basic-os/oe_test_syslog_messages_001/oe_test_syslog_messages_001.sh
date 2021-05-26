@@ -33,12 +33,12 @@ function run_test() {
 	tail -f /var/log/messages >log 2>&1 &
 	log_line1=$(cat log | wc -l)
 	SLEEP_WAIT 1
-	useradd test1 && userdel -r test1
+	systemctl restart sshd
 	SLEEP_WAIT 4
 	log_line2=$(cat log | wc -l)
 	test $((log_line1)) -ne $((log_line2))
 	CHECK_RESULT $?
-	grep audit /var/log/messages
+	grep audit /var/log/messages >/dev/null
 	CHECK_RESULT $?
 	LOG_INFO "End to run test."
 }

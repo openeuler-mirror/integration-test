@@ -50,9 +50,11 @@ function run_test() {
     iscsiadm -m node -p ${local_addr} -l
 
     systemctl restart multipathd
+    multipath -v2
     path1=$(multipath -ll | grep disk1 | awk '{print $1}')
     path2=$(multipath -ll | grep disk2 | awk '{print $1}')
     test -n "$path1" && test -n "$path2" || return 1
+    sleep 1
     mkfs.ext4 -F /dev/mapper/$path1
     mkfs.ext4 -F /dev/mapper/$path2
 
@@ -74,6 +76,7 @@ function post_test() {
     test -f initiatorname.iscsi && mv initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
     rm -rf $lun1 $lun2
     test ${firewall_status} -eq 1 && systemctl restart firewalld
+    dnf remove -y open-iscsi multipath-tools target-restore targetcli
 }
 
 main $@
