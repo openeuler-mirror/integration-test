@@ -29,7 +29,7 @@ function run_test() {
     grep "root" /etc/group 
     CHECK_RESULT $?
 
-    grep "HOME=/home"/etc/default/useradd 
+    grep "HOME=/home" /etc/default/useradd 
     CHECK_RESULT $?
 
     grep "PASS_MAX_DAYS" /etc/login.defs
