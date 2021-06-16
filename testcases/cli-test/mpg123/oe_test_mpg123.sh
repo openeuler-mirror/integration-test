@@ -52,6 +52,7 @@ function post_test()
 {
     LOG_INFO "Start to restore the test environment."
     rm -rf mess.wav mess.mp3.media.jpeg
+    DNF_REMOVE mpg123
     LOG_INFO "End to restore the test environment."
 }
 
