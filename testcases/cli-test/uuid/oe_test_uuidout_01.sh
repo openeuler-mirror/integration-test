@@ -8,12 +8,12 @@
 # MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 # See the Mulan PSL v2 for more details.
 ####################################
-#@Author    	:   lemon.higgins
-#@Contact   	:   lemon.higgins@aliyun.com
-#@Date      	:   2020-04-09 09:39:43
+#@Author    	:   mcfd
+#@Contact   	:   mcfd@qq.com
+#@Date      	:   2021/7/11
 #@License   	:   Mulan PSL v2
 #@Version   	:   1.0
-#@Desc      	:   Take the test ls command as an example
+#@Desc      	:   Testing uuid 
 #####################################
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
