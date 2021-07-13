@@ -35,34 +35,40 @@ function run_test()
 {
     LOG_INFO "Start to run test."
     uuid
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid"
     uuid -v1
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -v1"
     uuid -v3 ns:URL https://kernel.org
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -v3 ns:URL https://kernel.org"
     uuid -v4
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -v4"
     uuid -v5 ns:URL https://kernel.org
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -v5 ns:URL https://kernel.org"
     uuid -m
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -m"
     uuid -n2
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -n2"
     uuid -n3 -1
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -n3 -1"
     uuid -F bin
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -F bin"
     uuid -F str
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -F str"
     uuid -F siv
-    CHECK_RESULT $?
+    CHECK_RESULT $? 0 0 "Err:uuid -F siv"
     uuid -o 1.txt
     ls | grep 1.txt
-    CHECK_RESULT $?
-    uuid -h
-    CHECK_RESULT $?
-    uuid -d b847136c-e382-11eb-8b80-1b1b93efe3b6
-    CHECK_RESULT $?
+    out_info=$(cat 1.txt)
+    out_num=${#out_info}
+    if [ $out_num == 36 ]; then
+        return 0
+    else
+        return 1
+    fi
+    CHECK_RESULT $? 0 0 "Err:uuid -o 1.txt"
+    test_num=$(uuid)
+    uuid -d $test_num
+    CHECK_RESULT $? 0 0 "Err:uuid -d "
     LOG_INFO "End to run test."
 }
 
@@ -72,7 +78,7 @@ function post_test()
     LOG_INFO "Start to restore the test environment."
 
     rm 1.txt
-    DNF_REMOVE "uuid"
+    DNF_REMOVE
 
     LOG_INFO "End to restore the test environment."
 }
