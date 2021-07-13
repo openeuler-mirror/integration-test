@@ -57,14 +57,7 @@ function run_test()
     uuid -F siv
     CHECK_RESULT $? 0 0 "Err:uuid -F siv"
     uuid -o 1.txt
-    ls | grep 1.txt
-    out_info=$(cat 1.txt)
-    out_num=${#out_info}
-    if [ $out_num == 36 ]; then
-        return 0
-    else
-        return 1
-    fi
+    cat 1.txt | wc -w 
     CHECK_RESULT $? 0 0 "Err:uuid -o 1.txt"
     test_num=$(uuid)
     uuid -d $test_num
