@@ -1,0 +1,3 @@
+oe_test_acl_getfacl
+oe_test_acl_setfacl
+oe_test_acl_chacl
