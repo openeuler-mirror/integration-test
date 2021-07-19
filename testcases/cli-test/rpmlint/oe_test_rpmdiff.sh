@@ -53,7 +53,7 @@ function run_test()
 function post_test()
 {
     LOG_INFO "Start to restore the test environment."
-    rm -rf LibRaw-0.19.0-9.oe1.aarch64.rpm LibRaw-0.19.0-10.oe1.aarch64.rpm
+    DNF_REMOVE LibRaw-0.19.0-9.oe1.aarch64.rpm LibRaw-0.19.0-10.oe1.aarch64.rpm
     LOG_INFO "End to restore the test environment."
 }
 

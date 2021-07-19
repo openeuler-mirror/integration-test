@@ -59,7 +59,7 @@ function run_test()
 function post_test()
 {
     LOG_INFO "Start to restore the test environment."
-    rm -rf unzip
+    DNF_REMOVE unzip
     LOG_INFO "End to restore the test environment."
 }
 
