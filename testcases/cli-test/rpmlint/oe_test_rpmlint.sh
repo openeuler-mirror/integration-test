@@ -11,7 +11,7 @@
 ####################################
 #@Author    	:   ycd21028
 #@Contact   	:   1076964753@qq.com
-#@Date      	:   2020-05-29 09:39:43
+#@Date      	:   2021-07-19 16:29:13
 #@License   	:   Mulan PSL v2
 #@Version   	:   1.0
 #@Desc      	:   use the rpmlint command to check common errors in the rpm packages
@@ -28,26 +28,26 @@ function pre_test()
 
 function run_test()
 {
-#test rpm
+    # test rpm
     LOG_INFO "Start to run test1."
     wget https://repo.openeuler.org/openEuler-20.03-LTS/everything/aarch64/Packages/LibRaw-0.19.0-9.oe1.aarch64.rpm
     rpmlint -i LibRaw-0.19.0-9.oe1.aarch64.rpm|grep -oE "[0-9]* packages and [0-9]* specfiles checked; [0-9]* errors, [0-9]* warnings."
     CHECK_RESULT $? 0 0 "rpmlint -i failed"
     LOG_INFO "End to run test1."
 
-#test  -V
+    # test -V
     LOG_INFO "Start to run test2."
     rpmlint -V |grep "rpmlint version 1.10 Copyright (C) 1999-2007 Frederic Lepied, Mandriva"
     CHECK_RESULT $? 0 0 "rpmlint -V failed"
     LOG_INFO "End to run test2."
 
-#test -C
+    # test -C
     LOG_INFO "Start to run test3."
     rpmlint -C /root /home|grep -oE "[0-9]* packages and [0-9]* specfiles checked; [0-9]* errors, [0-9]* warnings."
     CHECK_RESULT $? 0 0 "rpmlint -C failed"
     LOG_INFO "End to run test3."
 
-#test spec
+    # test spec
     LOG_INFO "Start to run test4."
     git clone -b openEuler-21.03-20210330 https://gitee.com/src-openeuler/unzip.git
     cd unzip
