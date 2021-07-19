@@ -57,7 +57,7 @@ function run_test()
     uuid -F siv
     CHECK_RESULT $? 0 0 "Err:uuid -F siv"
     uuid -o 1.txt
-    cat 1.txt | wc -w 
+    cat 1.txt | wc -m | grep 37 
     CHECK_RESULT $? 0 0 "Err:uuid -o 1.txt"
     test_num=$(uuid)
     uuid -d $test_num
