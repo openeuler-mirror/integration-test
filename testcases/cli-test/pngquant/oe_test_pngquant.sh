@@ -18,15 +18,6 @@
 
 source ${OET_PATH}/libs/locallibs/common_lib.sh
 
-function config_params()
-{
-    LOG_INFO "Start to config params of the case."
-
-    LOG_INFO "No params need to config."
-
-    LOG_INFO "End to config params of the case."
-}
-
 function pre_test()
 {
     LOG_INFO "Start to prepare the test environment."
