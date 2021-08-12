@@ -1,0 +1,5 @@
+oe_test_iperf3_version
+oe_test_iperf3_server
+oe_test_iperf3_client
+oe_test_iperf3_multithread
+oe_test_iperf3_udpbandwidth
