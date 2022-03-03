@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" == "false" ]; then
+    rename file4 file_2 /resource/file4
+else
+    rename file file_1 /resource/file
+fi

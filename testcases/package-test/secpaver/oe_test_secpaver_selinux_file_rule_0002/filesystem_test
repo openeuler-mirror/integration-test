@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" == "false" ]; then
+    rm -f /resource/file4
+else
+    rm -f /resource/file
+fi
