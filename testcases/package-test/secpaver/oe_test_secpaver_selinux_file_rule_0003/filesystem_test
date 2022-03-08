@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ "$1" == "false" ]; then
+    echo "write rules" >> /resource/file
+    echo "write to file" >> /resource/file
+else
+    echo "write rules" >> /resource/file4
+    echo "write to file" >> /resource/file4
+fi

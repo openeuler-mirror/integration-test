@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "$1" == "false" ]; then
+    touch /resource/false
+else
+    touch /resource/all
+fi
